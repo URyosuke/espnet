@@ -112,27 +112,34 @@ class D0(AbsFeatsExtract):
         if input_lengths is None:
             input_lengths = input.new_ones(input.size(0), dtype=torch.long) * input.size(1)
 
-        # STFT
+        # STFT: 音声波形 -> 複素スペクトログラム
+        # input: (B, T_audio) -> input_stft: (B, N_frames, N_freq, 2), stft_lengths: (B,)
         input_stft, stft_lengths = self.stft(input, input_lengths)
-        assert input_stft.dim() >= 4 and input_stft.shape[-1] == 2
+        assert input_stft.dim() >= 4, input_stft.shape  # 4次元以上であることを確認
+        assert input_stft.shape[-1] == 2, input_stft.shape  # 複素数(実部・虚部)であることを確認
 
-        # power -> amplitude
+        # 複素スペクトログラム -> パワースペクトル -> 振幅スペクトル
+        # input_power: (B, N_frames, N_freq), input_amp: (B, N_frames, N_freq)
         input_power = input_stft[..., 0] ** 2 + input_stft[..., 1] ** 2
         input_amp = torch.sqrt(torch.clamp(input_power, min=1.0e-10))
 
-        # log-mel
+        # 振幅スペクトル -> 対数メルスペクトログラム
+        # logmel_feats: (B, N_frames, n_mels), mel_lengths: (B,)
         logmel_feats, mel_lengths = self.logmel(input_amp, stft_lengths)
 
-        # mel-cepstrum via DCT
+        # 対数メルスペクトログラム -> メルケプストラム (DCT変換)
+        # mcep: (B, N_frames, n_mels)
         mcep = torch.matmul(logmel_feats, self.dct_mat)
 
-        # delta (first-order difference) with edge replication
-        diff = mcep[:, 1:, :] - mcep[:, :-1, :]
-        zero = mcep.new_zeros(mcep.size(0), 1, mcep.size(2))
-        delta = torch.cat([zero, diff], dim=1)
+        # メルケプストラム -> 一次差分 (Δ特徴量)
+        # diff: (B, N_frames-1, n_mels), delta: (B, N_frames, n_mels)
+        diff = mcep[:, 1:, :] - mcep[:, :-1, :]  # 隣接フレーム間の差分
+        zero = mcep.new_zeros(mcep.size(0), 1, mcep.size(2))  # 先頭フレーム用のゼロ
+        delta = torch.cat([zero, diff], dim=1)  # 時間軸で結合
 
-        # L2-norm per frame
-        d0 = torch.norm(delta, dim=2)
+        # Δ特徴量のL2ノルム -> D0系列
+        # d0: (B, N_frames)
+        d0 = torch.norm(delta, dim=2)  # 各フレームの特徴量次元でL2ノルム
 
         # length adjustment
         if feats_lengths is not None:
@@ -155,6 +162,8 @@ class D0(AbsFeatsExtract):
             d0 = pad_list(d0_list, 0.0)
             d0_lengths = durations_lengths
 
+        # 最終出力: (B, T, 1) 形状に整形
+        # d0: (B, T, 1), d0_lengths: (B,)
         return d0.unsqueeze(-1), d0_lengths
 
     def _average_by_duration(self, x: torch.Tensor, d: torch.Tensor) -> torch.Tensor:
