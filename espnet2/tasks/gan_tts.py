@@ -11,23 +11,29 @@ import numpy as np
 import torch
 from typeguard import typechecked
 
-from espnet2.gan_tts.abs_gan_tts import AbsGANTTS
+# GAN-TTSモデル関連
+from espnet2.gan_tts.abs_gan_tts import AbsGANTTS # GAN-TTSの抽象クラス
 from espnet2.gan_tts.espnet_model import ESPnetGANTTSModel
 from espnet2.gan_tts.jets import JETS
 from espnet2.gan_tts.joint import JointText2Wav
 from espnet2.gan_tts.vits import VITS
+
+# 正規化関連・前処理関連
 from espnet2.layers.abs_normalize import AbsNormalize
 from espnet2.layers.global_mvn import GlobalMVN
 from espnet2.layers.utterance_mvn import UtteranceMVN
+
+# 特徴量抽出関連
 from espnet2.tasks.abs_task import AbsTask, optim_classes
 from espnet2.text.phoneme_tokenizer import g2p_choices
 from espnet2.train.class_choices import ClassChoices
 from espnet2.train.collate_fn import CommonCollateFn
 from espnet2.train.gan_trainer import GANTrainer
-from espnet2.train.preprocessor import CommonPreprocessor
+from espnet2.train.preprocessor import CommonPreprocessor # 共通前処理クラス
 from espnet2.tts.feats_extract.abs_feats_extract import AbsFeatsExtract
 from espnet2.tts.feats_extract.dio import Dio
 from espnet2.tts.feats_extract.energy import Energy
+from espnet2.tts.feats_extract.d0 import D0 # D0抽出クラスのインポートを追加
 from espnet2.tts.feats_extract.linear_spectrogram import LinearSpectrogram
 from espnet2.tts.feats_extract.log_mel_fbank import LogMelFbank
 from espnet2.tts.feats_extract.log_spectrogram import LogSpectrogram
@@ -79,6 +85,14 @@ energy_extractor_choices = ClassChoices(
     default=None,
     optional=True,
 )
+# D0抽出クラスの追加
+d0_extractor_choices = ClassChoices(
+    "d0_extract",
+    classes=dict(d0=D0),
+    type_check=AbsFeatsExtract,
+    default=None,
+    optional=True,
+)
 pitch_normalize_choices = ClassChoices(
     "pitch_normalize",
     classes=dict(
@@ -91,6 +105,17 @@ pitch_normalize_choices = ClassChoices(
 )
 energy_normalize_choices = ClassChoices(
     "energy_normalize",
+    classes=dict(
+        global_mvn=GlobalMVN,
+        utterance_mvn=UtteranceMVN,
+    ),
+    type_check=AbsNormalize,
+    default=None,
+    optional=True,
+)
+# D0正規化クラスの追加
+d0_normalize_choices = ClassChoices(
+    "d0_normalize",
     classes=dict(
         global_mvn=GlobalMVN,
         utterance_mvn=UtteranceMVN,
@@ -123,6 +148,10 @@ class GANTTSTask(AbsTask):
         energy_extractor_choices,
         # --energy_normalize and --energy_normalize_conf
         energy_normalize_choices,
+        # --d0_extract and --d0_extract_conf
+        d0_extractor_choices,
+        # --d0_normalize and --d0_normalize_conf
+        d0_normalize_choices,
     ]
 
     # Use GANTrainer instead of Trainer
@@ -255,6 +284,7 @@ class GANTTSTask(AbsTask):
                 "durations",
                 "pitch",
                 "energy",
+                "d0",
                 "sids",
                 "lids",
             )
@@ -266,6 +296,7 @@ class GANTTSTask(AbsTask):
                 "durations",
                 "pitch",
                 "energy",
+                "d0",
                 "sids",
                 "lids",
             )
@@ -318,6 +349,8 @@ class GANTTSTask(AbsTask):
         energy_extract = None
         pitch_normalize = None
         energy_normalize = None
+        d0_extract = None
+        d0_normalize = None
         if getattr(args, "pitch_extract", None) is not None:
             pitch_extract_class = pitch_extractor_choices.get_class(
                 args.pitch_extract,
@@ -346,6 +379,20 @@ class GANTTSTask(AbsTask):
             energy_normalize = energy_normalize_class(
                 **args.energy_normalize_conf,
             )
+        if getattr(args, "d0_extract", None) is not None:
+            d0_extract_class = d0_extractor_choices.get_class(
+                args.d0_extract,
+            )
+            d0_extract = d0_extract_class(
+                **args.d0_extract_conf,
+            )
+        if getattr(args, "d0_normalize", None) is not None:
+            d0_normalize_class = d0_normalize_choices.get_class(
+                args.d0_normalize,
+            )
+            d0_normalize = d0_normalize_class(
+                **args.d0_normalize_conf,
+            )
 
         # 5. Build model
         model = ESPnetGANTTSModel(
@@ -355,6 +402,8 @@ class GANTTSTask(AbsTask):
             pitch_normalize=pitch_normalize,
             energy_extract=energy_extract,
             energy_normalize=energy_normalize,
+            d0_extract=d0_extract,
+            d0_normalize=d0_normalize,
             tts=tts,
             **args.model_conf,
         )
