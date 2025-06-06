@@ -37,6 +37,8 @@ class ESPnetGANTTSModel(AbsGANESPnetModel):
         pitch_normalize: Optional[AbsNormalize and InversibleInterface],
         energy_extract: Optional[AbsFeatsExtract],
         energy_normalize: Optional[AbsNormalize and InversibleInterface],
+        d0_extract: Optional[AbsFeatsExtract],
+        d0_normalize: Optional[AbsNormalize and InversibleInterface],
         tts: AbsGANTTS,
     ):
         """Initialize ESPnetGANTTSModel module."""
@@ -47,6 +49,8 @@ class ESPnetGANTTSModel(AbsGANESPnetModel):
         self.pitch_normalize = pitch_normalize
         self.energy_extract = energy_extract
         self.energy_normalize = energy_normalize
+        self.d0_extract = d0_extract
+        self.d0_normalize = d0_normalize
         self.tts = tts
         assert hasattr(
             tts, "generator"
@@ -76,6 +80,8 @@ class ESPnetGANTTSModel(AbsGANESPnetModel):
         pitch_lengths: Optional[torch.Tensor] = None,
         energy: Optional[torch.Tensor] = None,
         energy_lengths: Optional[torch.Tensor] = None,
+        d0: Optional[torch.Tensor] = None,
+        d0_lengths: Optional[torch.Tensor] = None,
         spembs: Optional[torch.Tensor] = None,
         sids: Optional[torch.Tensor] = None,
         lids: Optional[torch.Tensor] = None,
@@ -95,6 +101,8 @@ class ESPnetGANTTSModel(AbsGANESPnetModel):
             pitch_lengths (Optional[Tensor]): Pitch length tensor (B,).
             energy (Optional[Tensor]): Energy tensor.
             energy_lengths (Optional[Tensor]): Energy length tensor (B,).
+            d0 (Optional[Tensor]): D0 tensor.
+            d0_lengths (Optional[Tensor]): D0 length tensor (B,).
             spembs (Optional[Tensor]): Speaker embedding tensor (B, D).
             sids (Optional[Tensor]): Speaker ID tensor (B, 1).
             lids (Optional[Tensor]): Language ID tensor (B, 1).
@@ -133,6 +141,14 @@ class ESPnetGANTTSModel(AbsGANESPnetModel):
                     durations=durations,
                     durations_lengths=durations_lengths,
                 )
+            if self.d0_extract is not None and d0 is None:
+                d0, d0_lengths = self.d0_extract(
+                    speech,
+                    speech_lengths,
+                    feats_lengths=feats_lengths,
+                    durations=durations,
+                    durations_lengths=durations_lengths,
+                )
 
             # Normalize
             if self.normalize is not None:
@@ -141,6 +157,8 @@ class ESPnetGANTTSModel(AbsGANESPnetModel):
                 pitch, pitch_lengths = self.pitch_normalize(pitch, pitch_lengths)
             if self.energy_normalize is not None:
                 energy, energy_lengths = self.energy_normalize(energy, energy_lengths)
+            if self.d0_normalize is not None:
+                d0, d0_lengths = self.d0_normalize(d0, d0_lengths)
 
         # Make batch for tts inputs
         batch = dict(
@@ -160,6 +178,8 @@ class ESPnetGANTTSModel(AbsGANESPnetModel):
             batch.update(pitch=pitch, pitch_lengths=pitch_lengths)
         if self.energy_extract is not None and energy is not None:
             batch.update(energy=energy, energy_lengths=energy_lengths)
+        if self.d0_extract is not None and d0 is not None:
+            batch.update(d0=d0, d0_lengths=d0_lengths)
         if spembs is not None:
             batch.update(spembs=spembs)
         if sids is not None:
@@ -181,6 +201,8 @@ class ESPnetGANTTSModel(AbsGANESPnetModel):
         pitch_lengths: Optional[torch.Tensor] = None,
         energy: Optional[torch.Tensor] = None,
         energy_lengths: Optional[torch.Tensor] = None,
+        d0: Optional[torch.Tensor] = None,
+        d0_lengths: Optional[torch.Tensor] = None,
         spembs: Optional[torch.Tensor] = None,
         sids: Optional[torch.Tensor] = None,
         lids: Optional[torch.Tensor] = None,
@@ -199,6 +221,8 @@ class ESPnetGANTTSModel(AbsGANESPnetModel):
             pitch_lengths (Optional[Tensor): Pitch length tensor (B,).
             energy (Optional[Tensor): Energy tensor.
             energy_lengths (Optional[Tensor): Energy length tensor (B,).
+            d0 (Optional[Tensor): D0 tensor.
+            d0_lengths (Optional[Tensor): D0 length tensor (B,).
             spembs (Optional[Tensor]): Speaker embedding tensor (B, D).
             sids (Optional[Tensor]): Speaker index tensor (B, 1).
             lids (Optional[Tensor]): Language ID tensor (B, 1).
@@ -229,6 +253,14 @@ class ESPnetGANTTSModel(AbsGANESPnetModel):
                 durations=durations,
                 durations_lengths=durations_lengths,
             )
+        if self.d0_extract is not None:
+            d0, d0_lengths = self.d0_extract(
+                speech,
+                speech_lengths,
+                feats_lengths=feats_lengths,
+                durations=durations,
+                durations_lengths=durations_lengths,
+            )
 
         # store in dict
         feats_dict = {}
@@ -238,5 +270,7 @@ class ESPnetGANTTSModel(AbsGANESPnetModel):
             feats_dict.update(pitch=pitch, pitch_lengths=pitch_lengths)
         if energy is not None:
             feats_dict.update(energy=energy, energy_lengths=energy_lengths)
+        if d0 is not None:
+            feats_dict.update(d0=d0, d0_lengths=d0_lengths)
 
         return feats_dict
