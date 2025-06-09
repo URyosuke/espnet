@@ -699,6 +699,7 @@ if ! "${skip_train}"; then
                 --normalize none \
                 --pitch_normalize none \
                 --energy_normalize none \
+                --d0_normalize none \
                 --train_data_path_and_name_and_type "${_train_dir}/text,text,text" \
                 --train_data_path_and_name_and_type "${_train_dir}/${_scp},speech,${_type}" \
                 --valid_data_path_and_name_and_type "${_valid_dir}/text,text,text" \
