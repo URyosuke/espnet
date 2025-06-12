@@ -1209,7 +1209,7 @@ class AbsTask(ABC):
     ):
         print(get_commandline_args(), file=sys.stderr)
         if args is None:
-            parser = cls.get_parser()
+            parser = cls.get_parser() # add_task_argumentsが中で呼ばれる
             args = parser.parse_args(cmd)
         args.version = __version__
         if args.pretrain_path is not None:
