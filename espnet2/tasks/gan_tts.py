@@ -317,7 +317,7 @@ class GANTTSTask(AbsTask):
         else:
             raise RuntimeError("token_list must be str or dict")
 
-        vocab_size = len(token_list)
+        vocab_size = len(token_list)  # 語彙数を算出
         logging.info(f"Vocabulary size: {vocab_size }")
 
         # 1. feats_extract
