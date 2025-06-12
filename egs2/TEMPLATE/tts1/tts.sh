@@ -872,6 +872,14 @@ if ! "${skip_train}"; then
             _opts+="--train_data_path_and_name_and_type ${_train_collect_dir}/${_scp},energy,${_type} "
             _opts+="--valid_data_path_and_name_and_type ${_valid_collect_dir}/${_scp},energy,${_type} "
         fi
+        if [ -e "${tts_stats_dir}/train/collect_feats/d0.scp" ]; then
+            _scp=d0.scp
+            _type=npy
+            _train_collect_dir=${tts_stats_dir}/train/collect_feats
+            _valid_collect_dir=${tts_stats_dir}/valid/collect_feats
+            _opts+="--train_data_path_and_name_and_type ${_train_collect_dir}/${_scp},d0,${_type} "
+            _opts+="--valid_data_path_and_name_and_type ${_valid_collect_dir}/${_scp},d0,${_type} "
+        fi
 
         # Check extra statistics
         if [ -e "${tts_stats_dir}/train/pitch_stats.npz" ]; then
@@ -888,6 +896,12 @@ if ! "${skip_train}"; then
             _opts+="--energy_extract_conf hop_length=${n_shift} "
             _opts+="--energy_extract_conf win_length=${win_length} "
             _opts+="--energy_normalize_conf stats_file=${tts_stats_dir}/train/energy_stats.npz "
+        fi
+        if [ -e "${tts_stats_dir}/train/d0_stats.npz" ]; then
+            _opts+="--d0_extract_conf fs=${fs} "
+            _opts+="--d0_extract_conf n_fft=${n_fft} "
+            _opts+="--d0_extract_conf hop_length=${n_shift} "
+            _opts+="--d0_normalize_conf stats_file=${tts_stats_dir}/train/d0_stats.npz "
         fi
 
         # Add speaker embedding to the inputs if needed
