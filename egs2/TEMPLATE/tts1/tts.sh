@@ -631,6 +631,9 @@ if ! "${skip_train}"; then
         _opts+="--d0_extract_conf n_fft=${n_fft} "
         _opts+="--d0_extract_conf hop_length=${n_shift} "
         _opts+="--d0_extract_conf win_length=${win_length} "
+        _opts+="--d0_extract_conf fmin=${fmin} "
+        _opts+="--d0_extract_conf fmax=${fmax} "
+        _opts+="--d0_extract_conf n_mels=${n_mels} "
 
         if [ -n "${teacher_dumpdir}" ]; then
             _teacher_train_dir="${teacher_dumpdir}/${train_set}"
@@ -901,6 +904,10 @@ if ! "${skip_train}"; then
             _opts+="--d0_extract_conf fs=${fs} "
             _opts+="--d0_extract_conf n_fft=${n_fft} "
             _opts+="--d0_extract_conf hop_length=${n_shift} "
+            _opts+="--d0_extract_conf win_length=${win_length} "
+            _opts+="--d0_extract_conf fmin=${fmin} "
+            _opts+="--d0_extract_conf fmax=${fmax} "
+            _opts+="--d0_extract_conf n_mels=${n_mels} "
             _opts+="--d0_normalize_conf stats_file=${tts_stats_dir}/train/d0_stats.npz "
         fi
 
