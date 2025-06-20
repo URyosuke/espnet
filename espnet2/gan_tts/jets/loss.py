@@ -47,6 +47,8 @@ class VarianceLoss(torch.nn.Module):
         ps: torch.Tensor,
         e_outs: torch.Tensor,
         es: torch.Tensor,
+        d0_outs: torch.Tensor,
+        d0s: torch.Tensor,
         ilens: torch.Tensor,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """Calculate forward propagation.
@@ -58,12 +60,15 @@ class VarianceLoss(torch.nn.Module):
             ps (Tensor): Batch of target token-averaged pitch (B, T_text, 1).
             e_outs (Tensor): Batch of outputs of energy predictor (B, T_text, 1).
             es (Tensor): Batch of target token-averaged energy (B, T_text, 1).
+            d0_outs (Tensor): Batch of outputs of d0 predictor (B, T_text, 1).
+            d0s (Tensor): Batch of target token-averaged d0 (B, T_text, 1).
             ilens (LongTensor): Batch of the lengths of each input (B,).
 
         Returns:
             Tensor: Duration predictor loss value.
             Tensor: Pitch predictor loss value.
             Tensor: Energy predictor loss value.
+            Tensor: D0 predictor loss value.
 
         """
         # apply mask to remove padded part
@@ -74,14 +79,17 @@ class VarianceLoss(torch.nn.Module):
             pitch_masks = make_non_pad_mask(ilens).unsqueeze(-1).to(ds.device)
             p_outs = p_outs.masked_select(pitch_masks)
             e_outs = e_outs.masked_select(pitch_masks)
+            d0_outs = d0_outs.masked_select(pitch_masks)
             ps = ps.masked_select(pitch_masks)
             es = es.masked_select(pitch_masks)
+            d0s = d0s.masked_select(pitch_masks)
 
         # calculate loss
         duration_loss = self.duration_criterion(d_outs, ds)
         pitch_loss = self.mse_criterion(p_outs, ps)
         energy_loss = self.mse_criterion(e_outs, es)
-
+        d0_loss = self.mse_criterion(d0_outs, d0s)
+        
         # make weighted mask and apply it
         if self.use_weighted_masking:
             duration_masks = make_non_pad_mask(ilens).to(ds.device)
@@ -100,8 +108,9 @@ class VarianceLoss(torch.nn.Module):
             energy_loss = (
                 energy_loss.mul(pitch_weights).masked_select(pitch_masks).sum()
             )
+            d0_loss = d0_loss.mul(d0_weights).masked_select(d0_masks).sum()
 
-        return duration_loss, pitch_loss, energy_loss
+        return duration_loss, pitch_loss, energy_loss, d0_loss
 
 
 class ForwardSumLoss(torch.nn.Module):
