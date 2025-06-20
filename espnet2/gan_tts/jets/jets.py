@@ -108,6 +108,12 @@ class JETS(AbsGANTTS):
             "pitch_predictor_dropout": 0.5,
             "pitch_embed_kernel_size": 1,
             "pitch_embed_dropout": 0.5,
+            "d0_predictor_layers": 2,
+            "d0_predictor_chans": 384,
+            "d0_predictor_kernel_size": 3,
+            "d0_predictor_dropout": 0.5,
+            "d0_embed_kernel_size": 9,
+            "d0_embed_dropout": 0.5,
             "stop_gradient_from_pitch_predictor": True,
             "generator_out_channels": 1,
             "generator_channels": 512,
@@ -449,6 +455,8 @@ class JETS(AbsGANTTS):
             ps,
             e_outs,
             es,
+            d0_outs,
+            d0s,
         ) = outs
         speech_ = get_segments(
             x=speech,
@@ -466,8 +474,8 @@ class JETS(AbsGANTTS):
         mel_loss = self.mel_loss(speech_hat_, speech_)
         adv_loss = self.generator_adv_loss(p_hat)
         feat_match_loss = self.feat_match_loss(p_hat, p)
-        dur_loss, pitch_loss, energy_loss = self.var_loss(
-            d_outs, ds, p_outs, ps, e_outs, es, text_lengths
+        dur_loss, pitch_loss, energy_loss, d0_loss = self.var_loss(
+            d_outs, ds, p_outs, ps, e_outs, es, d0_outs, d0s, text_lengths
         )
         forwardsum_loss = self.forwardsum_loss(log_p_attn, text_lengths, feats_lengths)
 
@@ -614,6 +622,7 @@ class JETS(AbsGANTTS):
         feats: Optional[torch.Tensor] = None,
         pitch: Optional[torch.Tensor] = None,
         energy: Optional[torch.Tensor] = None,
+        d0: Optional[torch.Tensor] = None,
         use_teacher_forcing: bool = False,
         **kwargs,
     ) -> Dict[str, torch.Tensor]:
@@ -624,6 +633,7 @@ class JETS(AbsGANTTS):
             feats (Tensor): Feature tensor (T_feats, aux_channels).
             pitch (Tensor): Pitch tensor (T_feats, 1).
             energy (Tensor): Energy tensor (T_feats, 1).
+            d0 (Tensor): D0 tensor (T_feats, 1).
             use_teacher_forcing (bool): Whether to use teacher forcing.
 
         Returns:
@@ -658,6 +668,8 @@ class JETS(AbsGANTTS):
             pitch = pitch[None]
             assert energy is not None
             energy = energy[None]
+            assert d0 is not None
+            d0 = d0[None]
 
             wav, dur = self.generator.inference(
                 text=text,
@@ -666,6 +678,7 @@ class JETS(AbsGANTTS):
                 feats_lengths=feats_lengths,
                 pitch=pitch,
                 energy=energy,
+                d0=d0,
                 use_teacher_forcing=use_teacher_forcing,
                 **kwargs,
             )
