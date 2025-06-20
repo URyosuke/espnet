@@ -94,6 +94,14 @@ class JETSGenerator(torch.nn.Module):
         pitch_embed_kernel_size: int = 9,
         pitch_embed_dropout: float = 0.5,
         stop_gradient_from_pitch_predictor: bool = False,
+        # d0 predictor
+        d0_predictor_layers: int = 2,
+        d0_predictor_chans: int = 384,
+        d0_predictor_kernel_size: int = 3,
+        d0_predictor_dropout: float = 0.5,
+        d0_embed_kernel_size: int = 9,
+        d0_embed_dropout: float = 0.5,
+        stop_gradient_from_d0_predictor: bool = False,
         # extra embedding related
         spks: Optional[int] = None,
         langs: Optional[int] = None,
@@ -419,7 +427,25 @@ class JETSGenerator(torch.nn.Module):
             ),
             torch.nn.Dropout(energy_embed_dropout),
         )
-
+        # define d0 predictor
+        self.d0_predictor = VariancePredictor(
+            idim=adim,
+            n_layers=d0_predictor_layers,
+            n_chans=d0_predictor_chans,
+            kernel_size=d0_predictor_kernel_size,
+            dropout_rate=d0_predictor_dropout,
+        )
+        # NOTE(kan-bayashi): We use continuous d0 + FastPitch style avg
+        self.d0_embed = torch.nn.Sequential(
+            torch.nn.Conv1d(
+                in_channels=1,
+                out_channels=adim,
+                kernel_size=d0_embed_kernel_size,
+                padding=(d0_embed_kernel_size - 1) // 2,
+            ),
+            torch.nn.Dropout(d0_embed_dropout),
+        )
+        
         # define AlignmentModule
         self.alignment_module = AlignmentModule(adim, odim)
 
@@ -506,6 +532,8 @@ class JETSGenerator(torch.nn.Module):
         pitch_lengths: torch.Tensor,
         energy: torch.Tensor,
         energy_lengths: torch.Tensor,
+        d0: torch.Tensor,
+        d0_lengths: torch.Tensor,
         sids: Optional[torch.Tensor] = None,
         spembs: Optional[torch.Tensor] = None,
         lids: Optional[torch.Tensor] = None,
@@ -553,7 +581,7 @@ class JETSGenerator(torch.nn.Module):
         feats = feats[:, : feats_lengths.max()]  # for data-parallel
         pitch = pitch[:, : pitch_lengths.max()]  # for data-parallel
         energy = energy[:, : energy_lengths.max()]  # for data-parallel
-
+        d0 = d0[:, : d0_lengths.max()]  # for data-parallel
         # forward encoder
         x_masks = self._source_mask(text_lengths)
         hs, _ = self.encoder(text, x_masks)  # (B, T_text, adim)
@@ -591,6 +619,9 @@ class JETSGenerator(torch.nn.Module):
         es = average_by_duration(
             ds, energy.squeeze(-1), text_lengths, feats_lengths
         ).unsqueeze(-1)
+        d0s = average_by_duration(
+            ds, d0.squeeze(-1), text_lengths, feats_lengths
+        ).unsqueeze(-1)
 
         # forward duration predictor and variance predictors
         if self.stop_gradient_from_pitch_predictor:
@@ -601,12 +632,17 @@ class JETSGenerator(torch.nn.Module):
             e_outs = self.energy_predictor(hs.detach(), h_masks.unsqueeze(-1))
         else:
             e_outs = self.energy_predictor(hs, h_masks.unsqueeze(-1))
+        if self.stop_gradient_from_d0_predictor:
+            d0_outs = self.d0_predictor(hs.detach(), h_masks.unsqueeze(-1))
+        else:
+            d0_outs = self.d0_predictor(hs, h_masks.unsqueeze(-1))
         d_outs = self.duration_predictor(hs, h_masks)
 
         # use groundtruth in training
         p_embs = self.pitch_embed(ps.transpose(1, 2)).transpose(1, 2)
         e_embs = self.energy_embed(es.transpose(1, 2)).transpose(1, 2)
-        hs = hs + e_embs + p_embs
+        d0_embs = self.d0_embed(d0s.transpose(1, 2)).transpose(1, 2) 
+        hs = hs + e_embs + p_embs + d0_embs
 
         # upsampling
         h_masks = make_non_pad_mask(feats_lengths).to(hs.device)
@@ -637,6 +673,8 @@ class JETSGenerator(torch.nn.Module):
             ps,
             e_outs,
             es,
+            d0_outs,
+            d0,
         )
 
     def inference(
@@ -647,6 +685,7 @@ class JETSGenerator(torch.nn.Module):
         feats_lengths: Optional[torch.Tensor] = None,
         pitch: Optional[torch.Tensor] = None,
         energy: Optional[torch.Tensor] = None,
+        d0: Optional[torch.Tensor] = None,
         sids: Optional[torch.Tensor] = None,
         spembs: Optional[torch.Tensor] = None,
         lids: Optional[torch.Tensor] = None,
@@ -709,15 +748,20 @@ class JETSGenerator(torch.nn.Module):
             e_outs = average_by_duration(
                 d_outs, energy.squeeze(-1), text_lengths, feats_lengths
             ).unsqueeze(-1)
+            d0_outs = average_by_duration(
+                d_outs, d0.squeeze(-1), text_lengths, feats_lengths
+            ).unsqueeze(-1)
         else:
             # forward duration predictor and variance predictors
             p_outs = self.pitch_predictor(hs, h_masks.unsqueeze(-1))
             e_outs = self.energy_predictor(hs, h_masks.unsqueeze(-1))
+            d0_outs = self.d0_predictor(hs, h_masks.unsqueeze(-1))
             d_outs = self.duration_predictor.inference(hs, h_masks)
 
         p_embs = self.pitch_embed(p_outs.transpose(1, 2)).transpose(1, 2)
         e_embs = self.energy_embed(e_outs.transpose(1, 2)).transpose(1, 2)
-        hs = hs + e_embs + p_embs
+        d0_embs = self.d0_embed(d0_outs.transpose(1, 2)).transpose(1, 2)
+        hs = hs + e_embs + p_embs + d0_embs
 
         # upsampling
         if feats_lengths is not None:
