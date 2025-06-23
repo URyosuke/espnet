@@ -108,7 +108,7 @@ class VarianceLoss(torch.nn.Module):
             energy_loss = (
                 energy_loss.mul(pitch_weights).masked_select(pitch_masks).sum()
             )
-            d0_loss = d0_loss.mul(d0_weights).masked_select(d0_masks).sum()
+            d0_loss = d0_loss.mul(pitch_weights).masked_select(pitch_masks).sum()
 
         return duration_loss, pitch_loss, energy_loss, d0_loss
 

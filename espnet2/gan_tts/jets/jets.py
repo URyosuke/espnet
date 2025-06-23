@@ -483,7 +483,7 @@ class JETS(AbsGANTTS):
         adv_loss = adv_loss * self.lambda_adv
         feat_match_loss = feat_match_loss * self.lambda_feat_match
         g_loss = mel_loss + adv_loss + feat_match_loss
-        var_loss = (dur_loss + pitch_loss + energy_loss) * self.lambda_var
+        var_loss = (dur_loss + pitch_loss + energy_loss + d0_loss) * self.lambda_var
         align_loss = (forwardsum_loss + bin_loss) * self.lambda_align
 
         loss = g_loss + var_loss + align_loss
@@ -499,6 +499,7 @@ class JETS(AbsGANTTS):
             generator_var_dur_loss=dur_loss.item(),
             generator_var_pitch_loss=pitch_loss.item(),
             generator_var_energy_loss=energy_loss.item(),
+            generator_var_d0_loss=d0_loss.item(),
             generator_align_forwardsum_loss=forwardsum_loss.item(),
             generator_align_bin_loss=bin_loss.item(),
         )
