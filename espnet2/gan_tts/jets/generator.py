@@ -674,7 +674,7 @@ class JETSGenerator(torch.nn.Module):
             e_outs,
             es,
             d0_outs,
-            d0,
+            d0s,
         )
 
     def inference(
