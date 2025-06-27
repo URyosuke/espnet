@@ -21,7 +21,7 @@ train_set=tr_no_dev
 valid_set=dev
 test_sets="dev eval1"
 
-train_config=conf/train_d0_jets.yaml
+train_config=conf/tuning/train_d0_jets.yaml
 inference_config=conf/decode.yaml
 
 # g2p=g2p_en # Include word separator
