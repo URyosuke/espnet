@@ -1,7 +1,7 @@
 """
 D0 extractor.
 
-Computes L2-norm of delta (first-order difference) of mel-cepstrum features.
+Computes L2-norm of delta (first-order difference) of cepstrum features.
 """
 
 from typing import Any, Dict, Optional, Tuple, Union
@@ -14,7 +14,6 @@ from typeguard import typechecked
 
 from espnet2.tts.feats_extract.abs_feats_extract import AbsFeatsExtract
 from espnet2.layers.stft import Stft
-from espnet2.layers.log_mel import LogMel
 from espnet.nets.pytorch_backend.nets_utils import pad_list
 
 class D0(AbsFeatsExtract):
@@ -31,20 +30,17 @@ class D0(AbsFeatsExtract):
         center: bool = True,
         normalized: bool = False,
         onesided: bool = True,
-        n_mels: int = 80,
-        fmin: float = None,
-        fmax: float = None,
-        htk: bool = False,
-        log_base: Optional[float] = None,
+        ceps_order: int = 25,
+        delta_K: int = 2,
         use_token_averaged_d0: bool = False,
         reduction_factor: Optional[int] = 1,
+        include_power: bool = True,
     ):
         super().__init__()
         if isinstance(fs, str):
             fs = humanfriendly.parse_size(fs)
 
         self.fs = fs
-        self.n_mels = n_mels
         self.n_fft = n_fft
         self.hop_length = hop_length
         self.win_length = win_length
@@ -52,7 +48,10 @@ class D0(AbsFeatsExtract):
         self.center = center
         self.normalized = normalized
         self.onesided = onesided
+        self.ceps_order = ceps_order
+        self.delta_K = delta_K
         self.use_token_averaged_d0 = use_token_averaged_d0
+        self.include_power = include_power
         if use_token_averaged_d0:
             assert reduction_factor >= 1
         self.reduction_factor = reduction_factor
@@ -66,22 +65,6 @@ class D0(AbsFeatsExtract):
             normalized=normalized,
             onesided=onesided,
         )
-        
-        # 対数メルスペクトログラムの計算
-        self.logmel = LogMel(
-            fs=fs,
-            n_fft=n_fft,
-            n_mels=n_mels,
-            fmin=fmin,
-            fmax=fmax,
-            htk=htk,
-            log_base=log_base,
-        )
-        # create DCT-II matrix for mel-cepstrum
-        n = torch.arange(n_mels).unsqueeze(1).float()
-        k = torch.arange(n_mels).unsqueeze(0).float()
-        dct_mat = torch.cos(math.pi * k * (2 * n + 1) / (2 * n_mels))
-        self.register_buffer("dct_mat", dct_mat)
 
     def output_size(self) -> int:
         return 1
@@ -92,12 +75,12 @@ class D0(AbsFeatsExtract):
             n_fft=self.n_fft,
             n_shift=self.hop_length,
             window=self.window,
-            n_mels=self.n_mels,
             win_length=self.win_length,
-            fmin=self.logmel.mel_options["fmin"],
-            fmax=self.logmel.mel_options["fmax"],
+            ceps_order=self.ceps_order,
+            delta_K=self.delta_K,
             use_token_averaged_d0=self.use_token_averaged_d0,
             reduction_factor=self.reduction_factor,
+            include_power=self.include_power,
         )
 
     def forward(
@@ -123,34 +106,31 @@ class D0(AbsFeatsExtract):
         input_power = input_stft[..., 0] ** 2 + input_stft[..., 1] ** 2
         input_amp = torch.sqrt(torch.clamp(input_power, min=1.0e-10))
 
-        # 振幅スペクトル -> 対数メルスペクトログラム
-        # logmel_feats: (B, N_frames, n_mels), mel_lengths: (B,)
-        logmel_feats, mel_lengths = self.logmel(input_amp, stft_lengths)
+        # 振幅スペクトル -> ケプストラム (MATLABのspec2cepsと同等の処理)
+        # ceps: (B, N_frames, ceps_order)
+        ceps = self._spec2ceps(input_amp, self.ceps_order)
 
-        # 対数メルスペクトログラム -> メルケプストラム (DCT変換)
-        # mcep: (B, N_frames, n_mels)
-        mcep = torch.matmul(logmel_feats, self.dct_mat)
+        # ケプストラム -> Δケプストラム (MATLABのceps2dCepsと同等の処理)
+        # dceps: (B, N_frames-2*K, ceps_order)
+        dceps = self._ceps2dceps(ceps, self.delta_K)
 
-        # メルケプストラム -> 一次差分 (Δ特徴量)
-        # diff: (B, N_frames-1, n_mels), delta: (B, N_frames, n_mels)
-        diff = mcep[:, 1:, :] - mcep[:, :-1, :]  # 隣接フレーム間の差分
-        zero = mcep.new_zeros(mcep.size(0), 1, mcep.size(2))  # 先頭フレーム用のゼロ
-        delta = torch.cat([zero, diff], dim=1)  # 時間軸で結合
+        # ΔケプストラムのL2ノルム -> D0系列 (MATLABのdCeps2normと同等の処理)
+        # d0: (B, N_frames-2*K)
+        d0 = self._dceps2norm(dceps, self.include_power)
 
-        # Δ特徴量のL2ノルム -> D0系列
-        # d0: (B, N_frames)
-        d0 = torch.norm(delta, dim=2)  # 各フレームの特徴量次元でL2ノルム
+        # Update lengths for delta computation
+        delta_stft_lengths = torch.clamp(stft_lengths - 2 * self.delta_K, min=0)
 
         # length adjustment
         if feats_lengths is not None:
             d0_list = [
                 self._adjust_num_frames(d0_i[:l], fl)
-                for d0_i, l, fl in zip(d0, mel_lengths, feats_lengths)
+                for d0_i, l, fl in zip(d0, delta_stft_lengths, feats_lengths)
             ]
             d0 = pad_list(d0_list, 0.0)
             d0_lengths = feats_lengths
         else:
-            d0_lengths = mel_lengths
+            d0_lengths = delta_stft_lengths
 
         # token-level average
         if self.use_token_averaged_d0:
@@ -165,6 +145,108 @@ class D0(AbsFeatsExtract):
         # 最終出力: (B, T, 1) 形状に整形
         # d0: (B, T, 1), d0_lengths: (B,)
         return d0.unsqueeze(-1), d0_lengths
+
+    def _spec2ceps(self, spec: torch.Tensor, order: int) -> torch.Tensor:
+        """
+        スペクトル（スペクトログラム）からケプストラム（ケプストログラム）を計算
+        MATLABのspec2ceps.mと同等の処理
+        
+        Args:
+            spec: 振幅スペクトル (B, N_frames, N_freq)
+            order: リフタリング次数
+            
+        Returns:
+            ceps: ケプストラム (B, N_frames, order)
+        """
+        # 対数スペクトル
+        log_spec = torch.log(torch.clamp(spec, min=1.0e-10))
+        
+        # 右半分を復元してスペクトルを左右対称に
+        # log_spec: (B, N_frames, N_freq) -> (B, N_frames, 2*(N_freq-1))
+        flipped_spec = torch.flip(log_spec[:, :, 1:-1], dims=[2])  # 両端を除いて反転
+        symmetric_log_spec = torch.cat([log_spec, flipped_spec], dim=2)
+        
+        # IFFT でケプストラムを計算
+        # symmetric_log_spec: (B, N_frames, 2*(N_freq-1)) -> ceps_complex: (B, N_frames, 2*(N_freq-1))
+        ceps_complex = torch.fft.ifft(symmetric_log_spec, dim=2)
+        ceps = ceps_complex.real
+        
+        # リフタリング（指定次数まで切り取り）
+        ceps = ceps[:, :, :order]
+        
+        return ceps
+
+    def _ceps2dceps(self, ceps: torch.Tensor, K: int) -> torch.Tensor:
+        """
+        ケプストラム（ケプストログラム）からΔケプストラム（の時系列）を計算
+        MATLABのceps2dCeps.mと同等の処理
+        
+        Args:
+            ceps: ケプストラム (B, N_frames, ceps_dim)
+            K: 線形単回帰に用いる時間幅を決定するパラメータ
+            
+        Returns:
+            dceps: Δケプストラム (B, N_frames-2*K, ceps_dim)
+        """
+        B, N_frames, ceps_dim = ceps.shape
+        
+        if N_frames <= 2 * K:
+            # フレーム数が不足している場合はゼロを返す
+            return torch.zeros(B, 0, ceps_dim, device=ceps.device, dtype=ceps.dtype)
+        
+        # 時間幅 k = -K:K
+        k = torch.arange(-K, K+1, device=ceps.device, dtype=ceps.dtype)  # (2*K+1,)
+        
+        # 分母の計算: sum(k^2)
+        denominator = torch.sum(k**2)  # スカラー
+        
+        # Δケプストラムの初期化
+        dceps = torch.zeros(B, N_frames - 2*K, ceps_dim, device=ceps.device, dtype=ceps.dtype)
+        
+        # 各フレームについてΔケプストラムを計算
+        for i, t in enumerate(range(K, N_frames - K)):  # t = K+1 to N_frames-K (0-indexed)
+            # 時間窓内のケプストラム: (B, 2*K+1, ceps_dim)
+            ceps_window = ceps[:, t-K:t+K+1, :]
+            
+            # 分子の計算: sum(k * ceps[:, t+k, :], axis=1)
+            # k: (2*K+1,) -> (1, 2*K+1, 1), ceps_window: (B, 2*K+1, ceps_dim)
+            k_expanded = k.unsqueeze(0).unsqueeze(2)  # (1, 2*K+1, 1)
+            numerator = torch.sum(k_expanded * ceps_window, dim=1)  # (B, ceps_dim)
+            
+            # Δケプストラム
+            dceps[:, i, :] = numerator / denominator
+        
+        return dceps
+
+    def _dceps2norm(self, dceps: torch.Tensor, include_power: bool) -> torch.Tensor:
+        """
+        Δケプストラム（の時系列）からΔケプストラムのノルム（の時系列）を計算
+        MATLABのdCeps2norm.mと同等の処理
+        
+        Args:
+            dceps: Δケプストラム (B, N_frames, ceps_dim)
+            include_power: パワー成分を含むかどうか
+            
+        Returns:
+            norm: ノルム (B, N_frames)
+        """
+        # 20/log(10) でデシベル値変換の係数
+        db_coeff = 20.0 / math.log(10.0)
+        
+        if include_power:
+            # パワー成分を含む: sqrt(2*sum(dceps[2:end, :]^2) + dceps[1, :]^2)
+            power_component = dceps[:, :, 0] ** 2  # (B, N_frames) - パワー成分（0次）
+            other_components = torch.sum(dceps[:, :, 1:] ** 2, dim=2)  # (B, N_frames) - その他の成分
+            norm_squared = power_component + 2.0 * other_components
+        else:
+            # パワー成分を含まない: sqrt(2*sum(dceps[2:end, :]^2))
+            other_components = torch.sum(dceps[:, :, 1:] ** 2, dim=2)  # (B, N_frames)
+            norm_squared = 2.0 * other_components
+        
+        # ノルムの計算
+        norm = db_coeff * torch.sqrt(torch.clamp(norm_squared, min=1.0e-10))
+        
+        return norm
 
     def _average_by_duration(self, x: torch.Tensor, d: torch.Tensor) -> torch.Tensor:
         assert 0 <= len(x) - d.sum() < self.reduction_factor
