@@ -1,6 +1,13 @@
 MAIN_ROOT=$PWD/../../..
 
-export PATH=$PWD/utils/:$PATH
+# ★★★ ここが追加された最重要部分 ★★★
+# PythonがESPnetのライブラリを見つけられるように、PYTHONPATHを設定
+export PYTHONPATH="${MAIN_ROOT}:${PYTHONPATH:-}"
+# ★★★ ここまで ★★★
+
+# 元の行に、espnet2/bin と utils を追加
+export PATH="${MAIN_ROOT}/utils:${MAIN_ROOT}/espnet2/bin:$PWD/utils/:$PATH"
+
 export LC_ALL=C
 
 if [ -f "${MAIN_ROOT}"/tools/activate_python.sh ]; then
