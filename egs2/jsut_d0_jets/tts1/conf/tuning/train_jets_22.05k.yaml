@@ -154,6 +154,11 @@ energy_extract_conf:
   reduction_factor: 1
   use_token_averaged_energy: false
 energy_normalize: global_mvn # normalizer for the energy feature
+d0_extract: d0 # d0 extractor type
+d0_extract_conf:
+  reduction_factor: 1
+  use_token_averaged_d0: false
+d0_normalize: global_mvn # normalizer for the d0 feature
 
 ##########################################################
 #            OPTIMIZER & SCHEDULER SETTING               #
