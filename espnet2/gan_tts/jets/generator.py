@@ -263,6 +263,7 @@ class JETSGenerator(torch.nn.Module):
         self.decoder_type = decoder_type
         self.stop_gradient_from_pitch_predictor = stop_gradient_from_pitch_predictor
         self.stop_gradient_from_energy_predictor = stop_gradient_from_energy_predictor
+        self.stop_gradient_from_d0_predictor = stop_gradient_from_d0_predictor
         self.use_scaled_pos_enc = use_scaled_pos_enc
         self.use_gst = use_gst
 
