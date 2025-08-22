@@ -4,6 +4,104 @@ PYTHON_VERSION=Python 3.9.23
 USE_CONDA=
 TH_VERSION=2.6.0
 WITH_OMP=ON
+# NOTE(jiatong): For python 3.12 case, as distutils are not default from 3.12
+. ./activate_python.sh && { python -m ensurepip --upgrade; pip install setuptools; }
+Looking in links: /tmp/tmpflxzg8p_
+Requirement already satisfied: setuptools in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (73.0.1)
+Requirement already satisfied: pip in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (25.1.1)
+Requirement already satisfied: setuptools in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (73.0.1)
+touch setuptools.done
+. ./activate_python.sh && python3 -m pip install packaging
+Requirement already satisfied: packaging in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (25.0)
+touch packaging.done
+. ./activate_python.sh && python3 -m pip install numpy
+Requirement already satisfied: numpy in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (1.23.5)
+touch numpy.done
+. ./activate_python.sh && python3 -m pip install -U numba
+Requirement already satisfied: numba in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (0.60.0)
+Requirement already satisfied: llvmlite<0.44,>=0.43.0dev0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from numba) (0.43.0)
+Requirement already satisfied: numpy<2.1,>=1.22 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from numba) (1.23.5)
+touch numba.done
+. ./activate_python.sh && ./installers/install_torch.sh "false" "2.6.0" "11.5"
+2025-07-14T08:16:30 (install_torch.sh:150:main) [INFO] python_version=3.9.23
+2025-07-14T08:16:30 (install_torch.sh:151:main) [INFO] torch_version=2.6.0
+2025-07-14T08:16:30 (install_torch.sh:152:main) [INFO] cuda_version=11.5
+2025-07-14T08:16:30 (install_torch.sh:144:check_cuda_version) [WARNING] Pre-built package for Pytorch=2.6.0 with CUDA=11.5 is not provided.
+2025-07-14T08:16:30 (install_torch.sh:165:main) [INFO] Fallback: cuda_version=11.5 -> cuda_version=12.6
+2025-07-14T08:16:30 (install_torch.sh:75:install_torch) [INFO] fallback use_conda: true -> false
+2025-07-14T08:16:30 (install_torch.sh:119:install_torch) python3 -m pip install torch==2.6.0 torchaudio==2.6.0 --extra-index-url https://download.pytorch.org/whl/cu126
+Looking in indexes: https://pypi.org/simple, https://download.pytorch.org/whl/cu126
+Collecting torch==2.6.0
+  Using cached https://download.pytorch.org/whl/cu126/torch-2.6.0%2Bcu126-cp39-cp39-manylinux_2_28_x86_64.whl.metadata (28 kB)
+Collecting torchaudio==2.6.0
+  Using cached https://download.pytorch.org/whl/cu126/torchaudio-2.6.0%2Bcu126-cp39-cp39-linux_x86_64.whl.metadata (6.6 kB)
+Requirement already satisfied: filelock in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch==2.6.0) (3.17.0)
+Requirement already satisfied: typing-extensions>=4.10.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch==2.6.0) (4.14.1)
+Requirement already satisfied: sympy==1.13.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch==2.6.0) (1.13.1)
+Requirement already satisfied: networkx in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch==2.6.0) (3.2.1)
+Requirement already satisfied: jinja2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch==2.6.0) (3.1.6)
+Requirement already satisfied: fsspec in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch==2.6.0) (2025.5.1)
+Collecting nvidia-cuda-nvrtc-cu12==12.6.77 (from torch==2.6.0)
+  Using cached https://download.pytorch.org/whl/cu126/nvidia_cuda_nvrtc_cu12-12.6.77-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cuda-runtime-cu12==12.6.77 (from torch==2.6.0)
+  Using cached nvidia_cuda_runtime_cu12-12.6.77-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cuda-cupti-cu12==12.6.80 (from torch==2.6.0)
+  Using cached nvidia_cuda_cupti_cu12-12.6.80-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cudnn-cu12==9.5.1.17 (from torch==2.6.0)
+  Using cached https://download.pytorch.org/whl/cu126/nvidia_cudnn_cu12-9.5.1.17-py3-none-manylinux_2_28_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cublas-cu12==12.6.4.1 (from torch==2.6.0)
+  Using cached https://download.pytorch.org/whl/cu126/nvidia_cublas_cu12-12.6.4.1-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cufft-cu12==11.3.0.4 (from torch==2.6.0)
+  Using cached nvidia_cufft_cu12-11.3.0.4-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-curand-cu12==10.3.7.77 (from torch==2.6.0)
+  Using cached nvidia_curand_cu12-10.3.7.77-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.5 kB)
+Collecting nvidia-cusolver-cu12==11.7.1.2 (from torch==2.6.0)
+  Using cached nvidia_cusolver_cu12-11.7.1.2-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cusparse-cu12==12.5.4.2 (from torch==2.6.0)
+  Using cached nvidia_cusparse_cu12-12.5.4.2-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-cusparselt-cu12==0.6.3 (from torch==2.6.0)
+  Using cached https://download.pytorch.org/whl/cu126/nvidia_cusparselt_cu12-0.6.3-py3-none-manylinux2014_x86_64.whl.metadata (6.8 kB)
+Collecting nvidia-nccl-cu12==2.21.5 (from torch==2.6.0)
+  Using cached https://download.pytorch.org/whl/nvidia_nccl_cu12-2.21.5-py3-none-manylinux2014_x86_64.whl (188.7 MB)
+Collecting nvidia-nvtx-cu12==12.6.77 (from torch==2.6.0)
+  Using cached nvidia_nvtx_cu12-12.6.77-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.6 kB)
+Collecting nvidia-nvjitlink-cu12==12.6.85 (from torch==2.6.0)
+  Using cached https://download.pytorch.org/whl/cu126/nvidia_nvjitlink_cu12-12.6.85-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl.metadata (1.5 kB)
+Collecting triton==3.2.0 (from torch==2.6.0)
+  Using cached https://download.pytorch.org/whl/triton-3.2.0-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (1.4 kB)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from sympy==1.13.1->torch==2.6.0) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from jinja2->torch==2.6.0) (3.0.2)
+Using cached https://download.pytorch.org/whl/cu126/torch-2.6.0%2Bcu126-cp39-cp39-manylinux_2_28_x86_64.whl (764.6 MB)
+Using cached https://download.pytorch.org/whl/cu126/torchaudio-2.6.0%2Bcu126-cp39-cp39-linux_x86_64.whl (3.5 MB)
+Using cached https://download.pytorch.org/whl/cu126/nvidia_cublas_cu12-12.6.4.1-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (393.1 MB)
+Using cached nvidia_cuda_cupti_cu12-12.6.80-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (8.9 MB)
+Using cached https://download.pytorch.org/whl/cu126/nvidia_cuda_nvrtc_cu12-12.6.77-py3-none-manylinux2014_x86_64.whl (23.7 MB)
+Using cached nvidia_cuda_runtime_cu12-12.6.77-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (897 kB)
+Using cached https://download.pytorch.org/whl/cu126/nvidia_cudnn_cu12-9.5.1.17-py3-none-manylinux_2_28_x86_64.whl (571.0 MB)
+Using cached nvidia_cufft_cu12-11.3.0.4-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (200.2 MB)
+Using cached nvidia_curand_cu12-10.3.7.77-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (56.3 MB)
+Using cached nvidia_cusolver_cu12-11.7.1.2-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (158.2 MB)
+Using cached nvidia_cusparse_cu12-12.5.4.2-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (216.6 MB)
+Using cached https://download.pytorch.org/whl/cu126/nvidia_cusparselt_cu12-0.6.3-py3-none-manylinux2014_x86_64.whl (156.8 MB)
+Using cached https://download.pytorch.org/whl/cu126/nvidia_nvjitlink_cu12-12.6.85-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (19.7 MB)
+Using cached nvidia_nvtx_cu12-12.6.77-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (89 kB)
+Using cached https://download.pytorch.org/whl/triton-3.2.0-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (166.6 MB)
+Installing collected packages: triton, nvidia-cusparselt-cu12, nvidia-nvtx-cu12, nvidia-nvjitlink-cu12, nvidia-nccl-cu12, nvidia-curand-cu12, nvidia-cuda-runtime-cu12, nvidia-cuda-nvrtc-cu12, nvidia-cuda-cupti-cu12, nvidia-cublas-cu12, nvidia-cusparse-cu12, nvidia-cufft-cu12, nvidia-cudnn-cu12, nvidia-cusolver-cu12, torch, torchaudio
+  Attempting uninstall: triton
+    Found existing installation: triton 3.1.0
+    Uninstalling triton-3.1.0:
+      Successfully uninstalled triton-3.1.0
+  Attempting uninstall: torch
+    Found existing installation: torch 2.5.1
+    Uninstalling torch-2.5.1:
+      Successfully uninstalled torch-2.5.1
+  Attempting uninstall: torchaudio
+    Found existing installation: torchaudio 2.5.1
+    Uninstalling torchaudio-2.5.1:
+      Successfully uninstalled torchaudio-2.5.1
+
+Successfully installed nvidia-cublas-cu12-12.6.4.1 nvidia-cuda-cupti-cu12-12.6.80 nvidia-cuda-nvrtc-cu12-12.6.77 nvidia-cuda-runtime-cu12-12.6.77 nvidia-cudnn-cu12-9.5.1.17 nvidia-cufft-cu12-11.3.0.4 nvidia-curand-cu12-10.3.7.77 nvidia-cusolver-cu12-11.7.1.2 nvidia-cusparse-cu12-12.5.4.2 nvidia-cusparselt-cu12-0.6.3 nvidia-nccl-cu12-2.21.5 nvidia-nvjitlink-cu12-12.6.85 nvidia-nvtx-cu12-12.6.77 torch-2.6.0+cu126 torchaudio-2.6.0+cu126 triton-3.2.0
+touch pytorch.done
 . ./activate_python.sh && ./installers/install_lightning.sh
 [INFO] torch_version=2.6.0+cu126
 Collecting lightning
@@ -15,15 +113,14 @@ Collecting lightning-utilities<2.0,>=0.10.0 (from lightning)
 Requirement already satisfied: packaging<27.0,>=20.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from lightning) (25.0)
 Requirement already satisfied: torch<4.0,>=2.1.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from lightning) (2.6.0+cu126)
 Collecting torchmetrics<3.0,>=0.7.0 (from lightning)
-  Using cached torchmetrics-1.7.3-py3-none-any.whl.metadata (21 kB)
-Collecting tqdm<6.0,>=4.57.0 (from lightning)
-  Downloading tqdm-4.67.1-py3-none-any.whl.metadata (57 kB)
-Requirement already satisfied: typing-extensions<6.0,>=4.4.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from lightning) (4.12.2)
+  Downloading torchmetrics-1.7.4-py3-none-any.whl.metadata (21 kB)
+Requirement already satisfied: tqdm<6.0,>=4.57.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from lightning) (4.67.1)
+Requirement already satisfied: typing-extensions<6.0,>=4.4.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from lightning) (4.14.1)
 Collecting pytorch-lightning (from lightning)
   Using cached pytorch_lightning-2.5.2-py3-none-any.whl.metadata (21 kB)
 Collecting aiohttp!=4.0.0a0,!=4.0.0a1 (from fsspec[http]<2027.0,>=2022.5.0->lightning)
-  Using cached aiohttp-3.12.13-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.6 kB)
-Requirement already satisfied: setuptools in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from lightning-utilities<2.0,>=0.10.0->lightning) (78.1.1)
+  Downloading aiohttp-3.12.14-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.6 kB)
+Requirement already satisfied: setuptools in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from lightning-utilities<2.0,>=0.10.0->lightning) (73.0.1)
 Requirement already satisfied: filelock in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch<4.0,>=2.1.0->lightning) (3.17.0)
 Requirement already satisfied: sympy==1.13.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch<4.0,>=2.1.0->lightning) (1.13.1)
 Requirement already satisfied: networkx in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch<4.0,>=2.1.0->lightning) (3.2.1)
@@ -43,19 +140,19 @@ Requirement already satisfied: nvidia-nvtx-cu12==12.6.77 in /home/uesugi/minicon
 Requirement already satisfied: nvidia-nvjitlink-cu12==12.6.85 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch<4.0,>=2.1.0->lightning) (12.6.85)
 Requirement already satisfied: triton==3.2.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch<4.0,>=2.1.0->lightning) (3.2.0)
 Requirement already satisfied: mpmath<1.4,>=1.1.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from sympy==1.13.1->torch<4.0,>=2.1.0->lightning) (1.3.0)
-Requirement already satisfied: numpy>1.20.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torchmetrics<3.0,>=0.7.0->lightning) (2.0.1)
+Requirement already satisfied: numpy>1.20.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torchmetrics<3.0,>=0.7.0->lightning) (1.23.5)
 Collecting aiohappyeyeballs>=2.5.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning)
   Using cached aiohappyeyeballs-2.6.1-py3-none-any.whl.metadata (5.9 kB)
-Collecting aiosignal>=1.1.2 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning)
-  Using cached aiosignal-1.3.2-py2.py3-none-any.whl.metadata (3.8 kB)
+Collecting aiosignal>=1.4.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning)
+  Downloading aiosignal-1.4.0-py3-none-any.whl.metadata (3.7 kB)
 Collecting async-timeout<6.0,>=4.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning)
   Using cached async_timeout-5.0.1-py3-none-any.whl.metadata (5.1 kB)
 Collecting attrs>=17.3.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning)
-  Downloading attrs-25.3.0-py3-none-any.whl.metadata (10 kB)
+  Using cached attrs-25.3.0-py3-none-any.whl.metadata (10 kB)
 Collecting frozenlist>=1.1.1 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning)
   Using cached frozenlist-1.7.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (18 kB)
 Collecting multidict<7.0,>=4.5 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning)
-  Using cached multidict-6.6.2-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (5.3 kB)
+  Downloading multidict-6.6.3-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (5.3 kB)
 Collecting propcache>=0.2.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning)
   Using cached propcache-0.3.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (12 kB)
 Collecting yarl<2.0,>=1.17.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning)
@@ -64,200 +161,139 @@ Requirement already satisfied: idna>=2.0 in /home/uesugi/miniconda3/envs/espnet_
 Requirement already satisfied: MarkupSafe>=2.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from jinja2->torch<4.0,>=2.1.0->lightning) (3.0.2)
 Using cached lightning-2.5.2-py3-none-any.whl (821 kB)
 Using cached lightning_utilities-0.14.3-py3-none-any.whl (28 kB)
-Using cached torchmetrics-1.7.3-py3-none-any.whl (962 kB)
-Downloading tqdm-4.67.1-py3-none-any.whl (78 kB)
-Using cached aiohttp-3.12.13-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.6 MB)
+Downloading torchmetrics-1.7.4-py3-none-any.whl (963 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 963.5/963.5 kB 70.3 kB/s eta 0:00:00
+Downloading aiohttp-3.12.14-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.6/1.6 MB 501.7 kB/s eta 0:00:00
 Using cached async_timeout-5.0.1-py3-none-any.whl (6.2 kB)
-Using cached multidict-6.6.2-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (240 kB)
+Downloading multidict-6.6.3-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (239 kB)
 Using cached yarl-1.20.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (327 kB)
 Using cached aiohappyeyeballs-2.6.1-py3-none-any.whl (15 kB)
-Using cached aiosignal-1.3.2-py2.py3-none-any.whl (7.6 kB)
-Downloading attrs-25.3.0-py3-none-any.whl (63 kB)
+Downloading aiosignal-1.4.0-py3-none-any.whl (7.5 kB)
+Using cached attrs-25.3.0-py3-none-any.whl (63 kB)
 Using cached frozenlist-1.7.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (225 kB)
 Using cached propcache-0.3.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (200 kB)
 Using cached pytorch_lightning-2.5.2-py3-none-any.whl (825 kB)
-Installing collected packages: tqdm, propcache, multidict, lightning-utilities, frozenlist, attrs, async-timeout, aiohappyeyeballs, yarl, aiosignal, aiohttp, torchmetrics, pytorch-lightning, lightning
+Installing collected packages: propcache, multidict, lightning-utilities, frozenlist, attrs, async-timeout, aiohappyeyeballs, yarl, aiosignal, aiohttp, torchmetrics, pytorch-lightning, lightning
 
-Successfully installed aiohappyeyeballs-2.6.1 aiohttp-3.12.13 aiosignal-1.3.2 async-timeout-5.0.1 attrs-25.3.0 frozenlist-1.7.0 lightning-2.5.2 lightning-utilities-0.14.3 multidict-6.6.2 propcache-0.3.2 pytorch-lightning-2.5.2 torchmetrics-1.7.3 tqdm-4.67.1 yarl-1.20.1
+Successfully installed aiohappyeyeballs-2.6.1 aiohttp-3.12.14 aiosignal-1.4.0 async-timeout-5.0.1 attrs-25.3.0 frozenlist-1.7.0 lightning-2.5.2 lightning-utilities-0.14.3 multidict-6.6.3 propcache-0.3.2 pytorch-lightning-2.5.2 torchmetrics-1.7.4 yarl-1.20.1
 touch lightning.done
-NUMPY_VERSION=2.0.1
+NUMPY_VERSION=1.23.5
 . ./activate_python.sh && python3 -m pip install -e "..[train, recipe]"  # Install editable mode by default
 Obtaining file:///home/uesugi/espnet-for-customize-jets
   Preparing metadata (setup.py): started
   Preparing metadata (setup.py): finished with status 'done'
-Collecting setuptools<74.0.0,>=38.5.1 (from espnet==202503)
-  Downloading setuptools-73.0.1-py3-none-any.whl.metadata (6.6 kB)
+Requirement already satisfied: setuptools<74.0.0,>=38.5.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (73.0.1)
 Requirement already satisfied: packaging in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (25.0)
-Collecting configargparse>=1.2.1 (from espnet==202503)
-  Downloading configargparse-1.7.1-py3-none-any.whl.metadata (24 kB)
-Collecting typeguard (from espnet==202503)
-  Downloading typeguard-4.4.4-py3-none-any.whl.metadata (3.3 kB)
-Collecting humanfriendly (from espnet==202503)
-  Using cached humanfriendly-10.0-py2.py3-none-any.whl.metadata (9.2 kB)
-Collecting scipy>=1.4.1 (from espnet==202503)
-  Downloading scipy-1.13.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (60 kB)
+Requirement already satisfied: configargparse>=1.2.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (1.7.1)
+Requirement already satisfied: typeguard in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (4.4.4)
+Requirement already satisfied: humanfriendly in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (10.0)
+Requirement already satisfied: scipy>=1.4.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (1.13.1)
 Requirement already satisfied: filelock in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (3.17.0)
-Collecting librosa==0.9.2 (from espnet==202503)
-  Using cached librosa-0.9.2-py3-none-any.whl.metadata (8.2 kB)
-Collecting jamo==0.4.1 (from espnet==202503)
-  Using cached jamo-0.4.1-py3-none-any.whl.metadata (2.3 kB)
+Requirement already satisfied: librosa==0.9.2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.9.2)
+Requirement already satisfied: jamo==0.4.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.4.1)
 Requirement already satisfied: PyYAML>=5.1.2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (6.0.2)
-Collecting soundfile>=0.10.2 (from espnet==202503)
-  Downloading soundfile-0.13.1-py2.py3-none-manylinux_2_28_x86_64.whl.metadata (16 kB)
-Collecting h5py>=2.10.0 (from espnet==202503)
-  Downloading h5py-3.14.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.7 kB)
-Collecting kaldiio>=2.18.0 (from espnet==202503)
-  Downloading kaldiio-2.18.1-py3-none-any.whl.metadata (13 kB)
+Requirement already satisfied: soundfile>=0.10.2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.13.1)
+Requirement already satisfied: h5py>=2.10.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (3.14.0)
+Requirement already satisfied: kaldiio>=2.18.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (2.18.1)
 Requirement already satisfied: torch>=1.11.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (2.6.0+cu126)
-Collecting torch_complex (from espnet==202503)
-  Downloading torch_complex-0.4.4-py3-none-any.whl.metadata (3.1 kB)
-Collecting nltk>=3.4.5 (from espnet==202503)
-  Downloading nltk-3.9.1-py3-none-any.whl.metadata (2.9 kB)
-Collecting numpy<1.24 (from espnet==202503)
-  Downloading numpy-1.23.5-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.3 kB)
-Collecting protobuf (from espnet==202503)
-  Downloading protobuf-6.31.1-cp39-abi3-manylinux2014_x86_64.whl.metadata (593 bytes)
-Collecting hydra-core (from espnet==202503)
-  Using cached hydra_core-1.3.2-py3-none-any.whl.metadata (5.5 kB)
-Collecting opt-einsum (from espnet==202503)
-  Downloading opt_einsum-3.4.0-py3-none-any.whl.metadata (6.3 kB)
+Requirement already satisfied: torch_complex in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.4.4)
+Requirement already satisfied: nltk>=3.4.5 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (3.9.1)
+Requirement already satisfied: numpy<1.24 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (1.23.5)
+Requirement already satisfied: protobuf in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (6.31.1)
+Requirement already satisfied: hydra-core in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (1.3.2)
+Requirement already satisfied: opt-einsum in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (3.4.0)
 Requirement already satisfied: lightning in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (2.5.2)
 Collecting sentencepiece==0.2.0 (from espnet==202503)
   Using cached sentencepiece-0.2.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.7 kB)
-Collecting ctc-segmentation>=1.6.6 (from espnet==202503)
-  Using cached ctc_segmentation-1.7.4-cp39-cp39-linux_x86_64.whl
-Collecting pyworld>=0.3.4 (from espnet==202503)
-  Downloading pyworld-0.3.5.tar.gz (261 kB)
-  Installing build dependencies: started
-  Installing build dependencies: finished with status 'done'
-  Getting requirements to build wheel: started
-  Getting requirements to build wheel: finished with status 'done'
-  Preparing metadata (pyproject.toml): started
-  Preparing metadata (pyproject.toml): finished with status 'done'
-Collecting pypinyin<=0.44.0 (from espnet==202503)
-  Using cached pypinyin-0.44.0-py2.py3-none-any.whl.metadata (10 kB)
-Collecting espnet_tts_frontend (from espnet==202503)
-  Using cached espnet_tts_frontend-0.0.3-py3-none-any.whl.metadata (3.4 kB)
-Collecting ci_sdr (from espnet==202503)
-  Using cached ci_sdr-0.0.2-py3-none-any.whl
-Collecting fast-bss-eval==0.1.3 (from espnet==202503)
-  Using cached fast_bss_eval-0.1.3-py3-none-any.whl
-Collecting asteroid_filterbanks==0.4.0 (from espnet==202503)
-  Using cached asteroid_filterbanks-0.4.0-py3-none-any.whl.metadata (3.3 kB)
-Collecting editdistance (from espnet==202503)
-  Using cached editdistance-0.8.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.9 kB)
-Collecting importlib-metadata<5.0 (from espnet==202503)
-  Using cached importlib_metadata-4.13.0-py3-none-any.whl.metadata (4.9 kB)
-Collecting espnet_model_zoo (from espnet==202503)
-  Using cached espnet_model_zoo-0.1.7-py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: ctc-segmentation>=1.6.6 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (1.7.4)
+Requirement already satisfied: pyworld>=0.3.4 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.3.5)
+Requirement already satisfied: pypinyin<=0.44.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.44.0)
+Requirement already satisfied: espnet_tts_frontend in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.0.3)
+Requirement already satisfied: ci_sdr in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.0.2)
+Requirement already satisfied: fast-bss-eval==0.1.3 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.1.3)
+Requirement already satisfied: asteroid_filterbanks==0.4.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.4.0)
+Requirement already satisfied: editdistance in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.8.1)
+Requirement already satisfied: importlib-metadata<5.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (4.13.0)
+Requirement already satisfied: espnet_model_zoo in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.1.7)
 Collecting gdown (from espnet==202503)
-  Downloading gdown-5.2.0-py3-none-any.whl.metadata (5.8 kB)
-Collecting resampy (from espnet==202503)
-  Downloading resampy-0.4.3-py3-none-any.whl.metadata (3.0 kB)
+  Using cached gdown-5.2.0-py3-none-any.whl.metadata (5.8 kB)
+Requirement already satisfied: resampy in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (0.4.3)
 Collecting pysptk>=0.2.1 (from espnet==202503)
-  Downloading pysptk-1.0.1.tar.gz (461 kB)
-  Installing build dependencies: started
-  Installing build dependencies: finished with status 'done'
-  Getting requirements to build wheel: started
-  Getting requirements to build wheel: finished with status 'done'
-  Preparing metadata (pyproject.toml): started
-  Preparing metadata (pyproject.toml): finished with status 'done'
+  Using cached pysptk-1.0.1-cp39-cp39-linux_x86_64.whl
 Collecting morfessor (from espnet==202503)
   Using cached Morfessor-2.0.6-py3-none-any.whl.metadata (628 bytes)
 Collecting youtube_dl (from espnet==202503)
   Using cached youtube_dl-2021.12.17-py2.py3-none-any.whl.metadata (1.5 kB)
 Collecting nnmnkwii (from espnet==202503)
-  Downloading nnmnkwii-0.1.3.tar.gz (1.5 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.5/1.5 MB 526.5 kB/s eta 0:00:00
-  Installing build dependencies: started
-  Installing build dependencies: finished with status 'done'
-  Getting requirements to build wheel: started
-  Getting requirements to build wheel: finished with status 'done'
-  Preparing metadata (pyproject.toml): started
-  Preparing metadata (pyproject.toml): finished with status 'done'
+  Using cached nnmnkwii-0.1.3-cp39-cp39-linux_x86_64.whl
 Collecting museval>=0.2.1 (from espnet==202503)
   Using cached museval-0.4.1-py2.py3-none-any.whl.metadata (10 kB)
 Collecting pystoi>=0.2.2 (from espnet==202503)
   Using cached pystoi-0.4.1-py2.py3-none-any.whl.metadata (4.0 kB)
 Collecting mir-eval>=0.6 (from espnet==202503)
-  Downloading mir_eval-0.8.2-py3-none-any.whl.metadata (3.0 kB)
+  Using cached mir_eval-0.8.2-py3-none-any.whl.metadata (3.0 kB)
 Collecting fastdtw (from espnet==202503)
   Using cached fastdtw-0.3.4-py3-none-any.whl
 Collecting nara_wpe>=0.0.5 (from espnet==202503)
-  Downloading nara_wpe-0.0.11-py3-none-any.whl.metadata (6.1 kB)
+  Using cached nara_wpe-0.0.11-py3-none-any.whl.metadata (6.1 kB)
 Collecting sacrebleu>=1.5.1 (from espnet==202503)
-  Downloading sacrebleu-2.5.1-py3-none-any.whl.metadata (51 kB)
+  Using cached sacrebleu-2.5.1-py3-none-any.whl.metadata (51 kB)
 Collecting praatio<7,>=6 (from espnet==202503)
   Using cached praatio-6.2.0-py3-none-any.whl.metadata (8.7 kB)
-Collecting scikit-learn>=1.0.0 (from espnet==202503)
-  Downloading scikit_learn-1.6.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (18 kB)
+Requirement already satisfied: scikit-learn>=1.0.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet==202503) (1.6.1)
 Collecting matplotlib (from espnet==202503)
-  Downloading matplotlib-3.9.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+  Using cached matplotlib-3.9.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
 Collecting pillow==9.5.0 (from espnet==202503)
   Using cached Pillow-9.5.0-cp39-cp39-manylinux_2_28_x86_64.whl.metadata (9.5 kB)
 Collecting wandb (from espnet==202503)
-  Downloading wandb-0.20.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (10 kB)
+  Downloading wandb-0.21.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (10 kB)
 Collecting tensorboard>=1.14 (from espnet==202503)
-  Downloading tensorboard-2.19.0-py3-none-any.whl.metadata (1.8 kB)
-Requirement already satisfied: typing-extensions in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from asteroid_filterbanks==0.4.0->espnet==202503) (4.12.2)
-Collecting audioread>=2.1.9 (from librosa==0.9.2->espnet==202503)
-  Using cached audioread-3.0.1-py3-none-any.whl.metadata (8.4 kB)
-Collecting joblib>=0.14 (from librosa==0.9.2->espnet==202503)
-  Downloading joblib-1.5.1-py3-none-any.whl.metadata (5.6 kB)
-Collecting decorator>=4.0.10 (from librosa==0.9.2->espnet==202503)
-  Downloading decorator-5.2.1-py3-none-any.whl.metadata (3.9 kB)
+  Using cached tensorboard-2.19.0-py3-none-any.whl.metadata (1.8 kB)
+Requirement already satisfied: typing-extensions in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from asteroid_filterbanks==0.4.0->espnet==202503) (4.14.1)
+Requirement already satisfied: audioread>=2.1.9 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from librosa==0.9.2->espnet==202503) (3.0.1)
+Requirement already satisfied: joblib>=0.14 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from librosa==0.9.2->espnet==202503) (1.5.1)
+Requirement already satisfied: decorator>=4.0.10 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from librosa==0.9.2->espnet==202503) (5.2.1)
 Requirement already satisfied: numba>=0.45.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from librosa==0.9.2->espnet==202503) (0.60.0)
-Collecting pooch>=1.0 (from librosa==0.9.2->espnet==202503)
-  Downloading pooch-1.8.2-py3-none-any.whl.metadata (10 kB)
-Collecting zipp>=0.5 (from importlib-metadata<5.0->espnet==202503)
-  Downloading zipp-3.23.0-py3-none-any.whl.metadata (3.6 kB)
-Collecting Cython (from ctc-segmentation>=1.6.6->espnet==202503)
-  Using cached cython-3.1.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.9 kB)
+Requirement already satisfied: pooch>=1.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from librosa==0.9.2->espnet==202503) (1.8.2)
+Requirement already satisfied: zipp>=0.5 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from importlib-metadata<5.0->espnet==202503) (3.23.0)
+Requirement already satisfied: Cython in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from ctc-segmentation>=1.6.6->espnet==202503) (3.1.2)
 Collecting musdb>=0.4.0 (from museval>=0.2.1->espnet==202503)
-  Downloading musdb-0.4.3-py2.py3-none-any.whl.metadata (10 kB)
-Collecting pandas>=1.0.1 (from museval>=0.2.1->espnet==202503)
-  Downloading pandas-2.3.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (91 kB)
+  Using cached musdb-0.4.3-py2.py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: pandas>=1.0.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from museval>=0.2.1->espnet==202503) (2.3.1)
 Collecting simplejson>=3.19.0 (from museval>=0.2.1->espnet==202503)
-  Downloading simplejson-3.20.1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.2 kB)
+  Using cached simplejson-3.20.1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.2 kB)
 Collecting jsonschema (from museval>=0.2.1->espnet==202503)
-  Downloading jsonschema-4.24.0-py3-none-any.whl.metadata (7.8 kB)
+  Using cached jsonschema-4.24.0-py3-none-any.whl.metadata (7.8 kB)
 Collecting stempeg>=0.2.4 (from musdb>=0.4.0->museval>=0.2.1->espnet==202503)
-  Downloading stempeg-0.2.4-py3-none-any.whl.metadata (9.2 kB)
+  Using cached stempeg-0.2.4-py3-none-any.whl.metadata (9.2 kB)
 Collecting pyaml (from musdb>=0.4.0->museval>=0.2.1->espnet==202503)
-  Downloading pyaml-25.5.0-py3-none-any.whl.metadata (12 kB)
+  Downloading pyaml-25.7.0-py3-none-any.whl.metadata (12 kB)
 Requirement already satisfied: tqdm in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from musdb>=0.4.0->museval>=0.2.1->espnet==202503) (4.67.1)
 Collecting bottleneck (from nara_wpe>=0.0.5->espnet==202503)
-  Downloading bottleneck-1.5.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (8.1 kB)
-Collecting click (from nara_wpe>=0.0.5->espnet==202503)
-  Using cached click-8.1.8-py3-none-any.whl.metadata (2.3 kB)
-Collecting regex>=2021.8.3 (from nltk>=3.4.5->espnet==202503)
-  Downloading regex-2024.11.6-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (40 kB)
+  Using cached bottleneck-1.5.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (8.1 kB)
+Requirement already satisfied: click in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from nara_wpe>=0.0.5->espnet==202503) (8.1.8)
+Requirement already satisfied: regex>=2021.8.3 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from nltk>=3.4.5->espnet==202503) (2024.11.6)
 Requirement already satisfied: llvmlite<0.44,>=0.43.0dev0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from numba>=0.45.1->librosa==0.9.2->espnet==202503) (0.43.0)
-Collecting python-dateutil>=2.8.2 (from pandas>=1.0.1->museval>=0.2.1->espnet==202503)
-  Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
-Collecting pytz>=2020.1 (from pandas>=1.0.1->museval>=0.2.1->espnet==202503)
-  Downloading pytz-2025.2-py2.py3-none-any.whl.metadata (22 kB)
-Collecting tzdata>=2022.7 (from pandas>=1.0.1->museval>=0.2.1->espnet==202503)
-  Downloading tzdata-2025.2-py2.py3-none-any.whl.metadata (1.4 kB)
-Collecting platformdirs>=2.5.0 (from pooch>=1.0->librosa==0.9.2->espnet==202503)
-  Downloading platformdirs-4.3.8-py3-none-any.whl.metadata (12 kB)
+Requirement already satisfied: python-dateutil>=2.8.2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from pandas>=1.0.1->museval>=0.2.1->espnet==202503) (2.9.0.post0)
+Requirement already satisfied: pytz>=2020.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from pandas>=1.0.1->museval>=0.2.1->espnet==202503) (2025.2)
+Requirement already satisfied: tzdata>=2022.7 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from pandas>=1.0.1->museval>=0.2.1->espnet==202503) (2025.2)
+Requirement already satisfied: platformdirs>=2.5.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from pooch>=1.0->librosa==0.9.2->espnet==202503) (4.3.8)
 Requirement already satisfied: requests>=2.19.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from pooch>=1.0->librosa==0.9.2->espnet==202503) (2.32.4)
-Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas>=1.0.1->museval>=0.2.1->espnet==202503)
-  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Requirement already satisfied: six>=1.5 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from python-dateutil>=2.8.2->pandas>=1.0.1->museval>=0.2.1->espnet==202503) (1.17.0)
 Requirement already satisfied: charset_normalizer<4,>=2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from requests>=2.19.0->pooch>=1.0->librosa==0.9.2->espnet==202503) (3.3.2)
 Requirement already satisfied: idna<4,>=2.5 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from requests>=2.19.0->pooch>=1.0->librosa==0.9.2->espnet==202503) (3.7)
 Requirement already satisfied: urllib3<3,>=1.21.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from requests>=2.19.0->pooch>=1.0->librosa==0.9.2->espnet==202503) (2.5.0)
 Requirement already satisfied: certifi>=2017.4.17 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from requests>=2.19.0->pooch>=1.0->librosa==0.9.2->espnet==202503) (2025.6.15)
 Collecting portalocker (from sacrebleu>=1.5.1->espnet==202503)
-  Downloading portalocker-3.2.0-py3-none-any.whl.metadata (8.7 kB)
+  Using cached portalocker-3.2.0-py3-none-any.whl.metadata (8.7 kB)
 Collecting tabulate>=0.8.9 (from sacrebleu>=1.5.1->espnet==202503)
   Using cached tabulate-0.9.0-py3-none-any.whl.metadata (34 kB)
 Collecting colorama (from sacrebleu>=1.5.1->espnet==202503)
   Using cached colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
 Collecting lxml (from sacrebleu>=1.5.1->espnet==202503)
-  Downloading lxml-6.0.0-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
-Collecting threadpoolctl>=3.1.0 (from scikit-learn>=1.0.0->espnet==202503)
-  Downloading threadpoolctl-3.6.0-py3-none-any.whl.metadata (13 kB)
+  Using cached lxml-6.0.0-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Requirement already satisfied: threadpoolctl>=3.1.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from scikit-learn>=1.0.0->espnet==202503) (3.6.0)
 Requirement already satisfied: cffi>=1.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from soundfile>=0.10.2->espnet==202503) (1.17.1)
 Requirement already satisfied: pycparser in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from cffi>=1.0->soundfile>=0.10.2->espnet==202503) (2.21)
 Collecting ffmpeg-python>=0.2.0 (from stempeg>=0.2.4->musdb>=0.4.0->museval>=0.2.1->espnet==202503)
@@ -265,15 +301,15 @@ Collecting ffmpeg-python>=0.2.0 (from stempeg>=0.2.4->musdb>=0.4.0->museval>=0.2
 Collecting future (from ffmpeg-python>=0.2.0->stempeg>=0.2.4->musdb>=0.4.0->museval>=0.2.1->espnet==202503)
   Using cached future-1.0.0-py3-none-any.whl.metadata (4.0 kB)
 Collecting absl-py>=0.4 (from tensorboard>=1.14->espnet==202503)
-  Downloading absl_py-2.3.0-py3-none-any.whl.metadata (2.4 kB)
+  Downloading absl_py-2.3.1-py3-none-any.whl.metadata (3.3 kB)
 Collecting grpcio>=1.48.2 (from tensorboard>=1.14->espnet==202503)
-  Downloading grpcio-1.73.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.8 kB)
+  Using cached grpcio-1.73.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.8 kB)
 Collecting markdown>=2.6.8 (from tensorboard>=1.14->espnet==202503)
-  Downloading markdown-3.8.2-py3-none-any.whl.metadata (5.1 kB)
+  Using cached markdown-3.8.2-py3-none-any.whl.metadata (5.1 kB)
 Collecting tensorboard-data-server<0.8.0,>=0.7.0 (from tensorboard>=1.14->espnet==202503)
   Using cached tensorboard_data_server-0.7.2-py3-none-manylinux_2_31_x86_64.whl.metadata (1.1 kB)
 Collecting werkzeug>=1.0.1 (from tensorboard>=1.14->espnet==202503)
-  Downloading werkzeug-3.1.3-py3-none-any.whl.metadata (3.7 kB)
+  Using cached werkzeug-3.1.3-py3-none-any.whl.metadata (3.7 kB)
 Requirement already satisfied: sympy==1.13.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.11.0->espnet==202503) (1.13.1)
 Requirement already satisfied: networkx in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.11.0->espnet==202503) (3.2.1)
 Requirement already satisfied: jinja2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.11.0->espnet==202503) (3.1.6)
@@ -294,250 +330,141 @@ Requirement already satisfied: nvidia-nvjitlink-cu12==12.6.85 in /home/uesugi/mi
 Requirement already satisfied: triton==3.2.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.11.0->espnet==202503) (3.2.0)
 Requirement already satisfied: mpmath<1.4,>=1.1.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from sympy==1.13.1->torch>=1.11.0->espnet==202503) (1.3.0)
 Requirement already satisfied: MarkupSafe>=2.1.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from werkzeug>=1.0.1->tensorboard>=1.14->espnet==202503) (3.0.2)
-Collecting einops (from ci_sdr->espnet==202503)
-  Downloading einops-0.8.1-py3-none-any.whl.metadata (13 kB)
-Collecting huggingface-hub (from espnet_model_zoo->espnet==202503)
-  Downloading huggingface_hub-0.33.1-py3-none-any.whl.metadata (14 kB)
-Collecting unidecode>=1.0.22 (from espnet_tts_frontend->espnet==202503)
-  Downloading Unidecode-1.4.0-py3-none-any.whl.metadata (13 kB)
-Collecting inflect>=1.0.0 (from espnet_tts_frontend->espnet==202503)
-  Downloading inflect-7.5.0-py3-none-any.whl.metadata (24 kB)
-Collecting jaconv (from espnet_tts_frontend->espnet==202503)
-  Downloading jaconv-0.4.0.tar.gz (17 kB)
-  Preparing metadata (setup.py): started
-  Preparing metadata (setup.py): finished with status 'done'
-Collecting g2p-en (from espnet_tts_frontend->espnet==202503)
-  Using cached g2p_en-2.1.0-py3-none-any.whl.metadata (4.5 kB)
-Collecting more_itertools>=8.5.0 (from inflect>=1.0.0->espnet_tts_frontend->espnet==202503)
-  Downloading more_itertools-10.7.0-py3-none-any.whl.metadata (37 kB)
-Collecting typing-extensions (from asteroid_filterbanks==0.4.0->espnet==202503)
-  Using cached typing_extensions-4.14.0-py3-none-any.whl.metadata (3.0 kB)
-Collecting distance>=0.1.3 (from g2p-en->espnet_tts_frontend->espnet==202503)
-  Using cached Distance-0.1.3-py3-none-any.whl
+Requirement already satisfied: einops in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from ci_sdr->espnet==202503) (0.8.1)
+Requirement already satisfied: huggingface-hub in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet_model_zoo->espnet==202503) (0.33.4)
+Requirement already satisfied: unidecode>=1.0.22 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet_tts_frontend->espnet==202503) (1.4.0)
+Requirement already satisfied: inflect>=1.0.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet_tts_frontend->espnet==202503) (7.5.0)
+Requirement already satisfied: jaconv in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet_tts_frontend->espnet==202503) (0.4.0)
+Requirement already satisfied: g2p-en in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from espnet_tts_frontend->espnet==202503) (2.1.0)
+Requirement already satisfied: more_itertools>=8.5.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from inflect>=1.0.0->espnet_tts_frontend->espnet==202503) (10.7.0)
+Requirement already satisfied: distance>=0.1.3 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from g2p-en->espnet_tts_frontend->espnet==202503) (0.1.3)
 Collecting beautifulsoup4 (from gdown->espnet==202503)
   Using cached beautifulsoup4-4.13.4-py3-none-any.whl.metadata (3.8 kB)
 Collecting soupsieve>1.2 (from beautifulsoup4->gdown->espnet==202503)
-  Downloading soupsieve-2.7-py3-none-any.whl.metadata (4.6 kB)
-Collecting hf-xet<2.0.0,>=1.1.2 (from huggingface-hub->espnet_model_zoo->espnet==202503)
-  Downloading hf_xet-1.1.5-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (879 bytes)
-Collecting omegaconf<2.4,>=2.2 (from hydra-core->espnet==202503)
-  Using cached omegaconf-2.3.0-py3-none-any.whl.metadata (3.9 kB)
-Collecting antlr4-python3-runtime==4.9.* (from hydra-core->espnet==202503)
-  Using cached antlr4_python3_runtime-4.9.3-py3-none-any.whl
+  Using cached soupsieve-2.7-py3-none-any.whl.metadata (4.6 kB)
+Requirement already satisfied: hf-xet<2.0.0,>=1.1.2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from huggingface-hub->espnet_model_zoo->espnet==202503) (1.1.5)
+Requirement already satisfied: omegaconf<2.4,>=2.2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from hydra-core->espnet==202503) (2.3.0)
+Requirement already satisfied: antlr4-python3-runtime==4.9.* in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from hydra-core->espnet==202503) (4.9.3)
 Requirement already satisfied: attrs>=22.2.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from jsonschema->museval>=0.2.1->espnet==202503) (25.3.0)
 Collecting jsonschema-specifications>=2023.03.6 (from jsonschema->museval>=0.2.1->espnet==202503)
-  Downloading jsonschema_specifications-2025.4.1-py3-none-any.whl.metadata (2.9 kB)
+  Using cached jsonschema_specifications-2025.4.1-py3-none-any.whl.metadata (2.9 kB)
 Collecting referencing>=0.28.4 (from jsonschema->museval>=0.2.1->espnet==202503)
   Using cached referencing-0.36.2-py3-none-any.whl.metadata (2.8 kB)
 Collecting rpds-py>=0.7.1 (from jsonschema->museval>=0.2.1->espnet==202503)
-  Downloading rpds_py-0.25.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+  Downloading rpds_py-0.26.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
 Requirement already satisfied: lightning-utilities<2.0,>=0.10.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from lightning->espnet==202503) (0.14.3)
-Requirement already satisfied: torchmetrics<3.0,>=0.7.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from lightning->espnet==202503) (1.7.3)
+Requirement already satisfied: torchmetrics<3.0,>=0.7.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from lightning->espnet==202503) (1.7.4)
 Requirement already satisfied: pytorch-lightning in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from lightning->espnet==202503) (2.5.2)
-Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from fsspec[http]<2027.0,>=2022.5.0->lightning->espnet==202503) (3.12.13)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from fsspec[http]<2027.0,>=2022.5.0->lightning->espnet==202503) (3.12.14)
 Requirement already satisfied: aiohappyeyeballs>=2.5.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning->espnet==202503) (2.6.1)
-Requirement already satisfied: aiosignal>=1.1.2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning->espnet==202503) (1.3.2)
+Requirement already satisfied: aiosignal>=1.4.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning->espnet==202503) (1.4.0)
 Requirement already satisfied: async-timeout<6.0,>=4.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning->espnet==202503) (5.0.1)
 Requirement already satisfied: frozenlist>=1.1.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning->espnet==202503) (1.7.0)
-Requirement already satisfied: multidict<7.0,>=4.5 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning->espnet==202503) (6.6.2)
+Requirement already satisfied: multidict<7.0,>=4.5 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning->espnet==202503) (6.6.3)
 Requirement already satisfied: propcache>=0.2.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning->espnet==202503) (0.3.2)
 Requirement already satisfied: yarl<2.0,>=1.17.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<2027.0,>=2022.5.0->lightning->espnet==202503) (1.20.1)
 Collecting contourpy>=1.0.1 (from matplotlib->espnet==202503)
-  Downloading contourpy-1.3.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.4 kB)
+  Using cached contourpy-1.3.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.4 kB)
 Collecting cycler>=0.10 (from matplotlib->espnet==202503)
   Using cached cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
 Collecting fonttools>=4.22.0 (from matplotlib->espnet==202503)
-  Downloading fonttools-4.58.4-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (106 kB)
+  Downloading fonttools-4.58.5-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (106 kB)
 Collecting kiwisolver>=1.3.1 (from matplotlib->espnet==202503)
-  Downloading kiwisolver-1.4.7-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl.metadata (6.3 kB)
+  Using cached kiwisolver-1.4.7-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl.metadata (6.3 kB)
 Collecting pyparsing>=2.3.1 (from matplotlib->espnet==202503)
-  Downloading pyparsing-3.2.3-py3-none-any.whl.metadata (5.0 kB)
+  Using cached pyparsing-3.2.3-py3-none-any.whl.metadata (5.0 kB)
 Collecting importlib-resources>=3.2.0 (from matplotlib->espnet==202503)
-  Downloading importlib_resources-6.5.2-py3-none-any.whl.metadata (3.9 kB)
+  Using cached importlib_resources-6.5.2-py3-none-any.whl.metadata (3.9 kB)
 Requirement already satisfied: PySocks!=1.5.7,>=1.5.6 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from requests[socks]->gdown->espnet==202503) (1.7.1)
 Collecting eval-type-backport (from wandb->espnet==202503)
-  Downloading eval_type_backport-0.2.2-py3-none-any.whl.metadata (2.2 kB)
+  Using cached eval_type_backport-0.2.2-py3-none-any.whl.metadata (2.2 kB)
 Collecting gitpython!=3.1.29,>=1.0.0 (from wandb->espnet==202503)
-  Downloading GitPython-3.1.44-py3-none-any.whl.metadata (13 kB)
-Collecting psutil>=5.0.0 (from wandb->espnet==202503)
-  Using cached psutil-7.0.0-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (22 kB)
+  Using cached GitPython-3.1.44-py3-none-any.whl.metadata (13 kB)
 Collecting pydantic<3 (from wandb->espnet==202503)
   Using cached pydantic-2.11.7-py3-none-any.whl.metadata (67 kB)
 Collecting sentry-sdk>=2.0.0 (from wandb->espnet==202503)
-  Downloading sentry_sdk-2.32.0-py2.py3-none-any.whl.metadata (10 kB)
-Collecting setproctitle (from wandb->espnet==202503)
-  Downloading setproctitle-1.3.6-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (10 kB)
+  Using cached sentry_sdk-2.32.0-py2.py3-none-any.whl.metadata (10 kB)
 Collecting annotated-types>=0.6.0 (from pydantic<3->wandb->espnet==202503)
-  Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+  Using cached annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
 Collecting pydantic-core==2.33.2 (from pydantic<3->wandb->espnet==202503)
-  Downloading pydantic_core-2.33.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.8 kB)
+  Using cached pydantic_core-2.33.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.8 kB)
 Collecting typing-inspection>=0.4.0 (from pydantic<3->wandb->espnet==202503)
-  Downloading typing_inspection-0.4.1-py3-none-any.whl.metadata (2.6 kB)
+  Using cached typing_inspection-0.4.1-py3-none-any.whl.metadata (2.6 kB)
 Collecting gitdb<5,>=4.0.1 (from gitpython!=3.1.29,>=1.0.0->wandb->espnet==202503)
-  Downloading gitdb-4.0.12-py3-none-any.whl.metadata (1.2 kB)
+  Using cached gitdb-4.0.12-py3-none-any.whl.metadata (1.2 kB)
 Collecting smmap<6,>=3.0.1 (from gitdb<5,>=4.0.1->gitpython!=3.1.29,>=1.0.0->wandb->espnet==202503)
-  Downloading smmap-5.0.2-py3-none-any.whl.metadata (4.3 kB)
-Using cached asteroid_filterbanks-0.4.0-py3-none-any.whl (29 kB)
-Using cached jamo-0.4.1-py3-none-any.whl (9.5 kB)
-Using cached librosa-0.9.2-py3-none-any.whl (214 kB)
+  Using cached smmap-5.0.2-py3-none-any.whl.metadata (4.3 kB)
 Using cached Pillow-9.5.0-cp39-cp39-manylinux_2_28_x86_64.whl (3.4 MB)
 Using cached sentencepiece-0.2.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.3 MB)
-Using cached importlib_metadata-4.13.0-py3-none-any.whl (23 kB)
-Downloading numpy-1.23.5-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (17.1 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.1/17.1 MB 14.0 MB/s eta 0:00:00
 Using cached praatio-6.2.0-py3-none-any.whl (80 kB)
-Using cached pypinyin-0.44.0-py2.py3-none-any.whl (1.3 MB)
-Downloading setuptools-73.0.1-py3-none-any.whl (2.3 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.3/2.3 MB 1.9 MB/s eta 0:00:00
-Using cached audioread-3.0.1-py3-none-any.whl (23 kB)
-Downloading configargparse-1.7.1-py3-none-any.whl (25 kB)
-Downloading decorator-5.2.1-py3-none-any.whl (9.2 kB)
-Downloading h5py-3.14.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (4.6 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.6/4.6 MB 5.3 MB/s eta 0:00:00
-Downloading joblib-1.5.1-py3-none-any.whl (307 kB)
-Downloading kaldiio-2.18.1-py3-none-any.whl (29 kB)
-Downloading mir_eval-0.8.2-py3-none-any.whl (102 kB)
+Using cached mir_eval-0.8.2-py3-none-any.whl (102 kB)
 Using cached museval-0.4.1-py2.py3-none-any.whl (20 kB)
-Downloading musdb-0.4.3-py2.py3-none-any.whl (13 kB)
-Downloading nara_wpe-0.0.11-py3-none-any.whl (34 kB)
-Downloading nltk-3.9.1-py3-none-any.whl (1.5 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.5/1.5 MB 3.2 MB/s eta 0:00:00
-Downloading pandas-2.3.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.4 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 7.7 MB/s eta 0:00:00
-Downloading pooch-1.8.2-py3-none-any.whl (64 kB)
-Downloading platformdirs-4.3.8-py3-none-any.whl (18 kB)
-Using cached cython-3.1.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)
+Using cached musdb-0.4.3-py2.py3-none-any.whl (13 kB)
+Using cached nara_wpe-0.0.11-py3-none-any.whl (34 kB)
 Using cached pystoi-0.4.1-py2.py3-none-any.whl (8.2 kB)
-Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
-Downloading pytz-2025.2-py2.py3-none-any.whl (509 kB)
-Downloading regex-2024.11.6-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (780 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 780.9/780.9 kB 1.1 MB/s eta 0:00:00
-Downloading resampy-0.4.3-py3-none-any.whl (3.1 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 2.4 MB/s eta 0:00:00
-Downloading sacrebleu-2.5.1-py3-none-any.whl (104 kB)
-Downloading scikit_learn-1.6.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (13.5 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.5/13.5 MB 2.5 MB/s eta 0:00:00
-Using cached scipy-1.13.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (38.6 MB)
-Downloading simplejson-3.20.1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (137 kB)
-Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
-Downloading soundfile-0.13.1-py2.py3-none-manylinux_2_28_x86_64.whl (1.3 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 47.0 kB/s eta 0:00:00
-Downloading stempeg-0.2.4-py3-none-any.whl (963 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 963.0/963.0 kB 657.1 kB/s eta 0:00:00
+Using cached sacrebleu-2.5.1-py3-none-any.whl (104 kB)
+Using cached simplejson-3.20.1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (137 kB)
+Using cached stempeg-0.2.4-py3-none-any.whl (963 kB)
 Using cached ffmpeg_python-0.2.0-py3-none-any.whl (25 kB)
 Using cached tabulate-0.9.0-py3-none-any.whl (35 kB)
-Downloading tensorboard-2.19.0-py3-none-any.whl (5.5 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.5/5.5 MB 5.9 MB/s eta 0:00:00
+Using cached tensorboard-2.19.0-py3-none-any.whl (5.5 MB)
 Using cached tensorboard_data_server-0.7.2-py3-none-manylinux_2_31_x86_64.whl (6.6 MB)
-Downloading absl_py-2.3.0-py3-none-any.whl (135 kB)
-Downloading grpcio-1.73.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (6.0 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.0/6.0 MB 7.6 MB/s eta 0:00:00
-Downloading markdown-3.8.2-py3-none-any.whl (106 kB)
-Downloading protobuf-6.31.1-cp39-abi3-manylinux2014_x86_64.whl (321 kB)
-Downloading threadpoolctl-3.6.0-py3-none-any.whl (18 kB)
-Downloading tzdata-2025.2-py2.py3-none-any.whl (347 kB)
-Downloading werkzeug-3.1.3-py3-none-any.whl (224 kB)
-Downloading zipp-3.23.0-py3-none-any.whl (10 kB)
-Downloading bottleneck-1.5.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (355 kB)
-Downloading click-8.1.8-py3-none-any.whl (98 kB)
+Downloading absl_py-2.3.1-py3-none-any.whl (135 kB)
+Using cached grpcio-1.73.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (6.0 MB)
+Using cached markdown-3.8.2-py3-none-any.whl (106 kB)
+Using cached werkzeug-3.1.3-py3-none-any.whl (224 kB)
+Using cached bottleneck-1.5.0-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (355 kB)
 Using cached colorama-0.4.6-py2.py3-none-any.whl (25 kB)
-Downloading editdistance-0.8.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (401 kB)
-Downloading einops-0.8.1-py3-none-any.whl (64 kB)
-Using cached espnet_model_zoo-0.1.7-py3-none-any.whl (19 kB)
-Using cached espnet_tts_frontend-0.0.3-py3-none-any.whl (11 kB)
-Downloading inflect-7.5.0-py3-none-any.whl (35 kB)
-Downloading more_itertools-10.7.0-py3-none-any.whl (65 kB)
-Downloading typeguard-4.4.4-py3-none-any.whl (34 kB)
-Using cached typing_extensions-4.14.0-py3-none-any.whl (43 kB)
-Downloading Unidecode-1.4.0-py3-none-any.whl (235 kB)
 Using cached future-1.0.0-py3-none-any.whl (491 kB)
-Using cached g2p_en-2.1.0-py3-none-any.whl (3.1 MB)
-Downloading gdown-5.2.0-py3-none-any.whl (18 kB)
-Downloading beautifulsoup4-4.13.4-py3-none-any.whl (187 kB)
-Downloading soupsieve-2.7-py3-none-any.whl (36 kB)
-Downloading huggingface_hub-0.33.1-py3-none-any.whl (515 kB)
-Downloading hf_xet-1.1.5-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.1 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 2.8 MB/s eta 0:00:00
-Using cached humanfriendly-10.0-py2.py3-none-any.whl (86 kB)
-Using cached hydra_core-1.3.2-py3-none-any.whl (154 kB)
-Using cached omegaconf-2.3.0-py3-none-any.whl (79 kB)
-Downloading jsonschema-4.24.0-py3-none-any.whl (88 kB)
-Downloading jsonschema_specifications-2025.4.1-py3-none-any.whl (18 kB)
+Using cached gdown-5.2.0-py3-none-any.whl (18 kB)
+Using cached beautifulsoup4-4.13.4-py3-none-any.whl (187 kB)
+Using cached soupsieve-2.7-py3-none-any.whl (36 kB)
+Using cached jsonschema-4.24.0-py3-none-any.whl (88 kB)
+Using cached jsonschema_specifications-2025.4.1-py3-none-any.whl (18 kB)
 Using cached referencing-0.36.2-py3-none-any.whl (26 kB)
-Downloading rpds_py-0.25.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (386 kB)
-Downloading lxml-6.0.0-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (5.3 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.3/5.3 MB 5.6 MB/s eta 0:00:00
-Downloading matplotlib-3.9.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (8.3 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.3/8.3 MB 4.2 MB/s eta 0:00:00
-Downloading contourpy-1.3.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (321 kB)
+Downloading rpds_py-0.26.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (383 kB)
+Using cached lxml-6.0.0-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (5.3 MB)
+Using cached matplotlib-3.9.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (8.3 MB)
+Using cached contourpy-1.3.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (321 kB)
 Using cached cycler-0.12.1-py3-none-any.whl (8.3 kB)
-Downloading fonttools-4.58.4-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.7 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 4.3 MB/s eta 0:00:00
-Downloading importlib_resources-6.5.2-py3-none-any.whl (37 kB)
-Downloading kiwisolver-1.4.7-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl (1.6 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.6/1.6 MB 2.0 MB/s eta 0:00:00
-Downloading pyparsing-3.2.3-py3-none-any.whl (111 kB)
+Downloading fonttools-4.58.5-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 642.0 kB/s eta 0:00:00
+Using cached importlib_resources-6.5.2-py3-none-any.whl (37 kB)
+Using cached kiwisolver-1.4.7-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl (1.6 MB)
+Using cached pyparsing-3.2.3-py3-none-any.whl (111 kB)
 Using cached Morfessor-2.0.6-py3-none-any.whl (35 kB)
-Downloading opt_einsum-3.4.0-py3-none-any.whl (71 kB)
-Downloading portalocker-3.2.0-py3-none-any.whl (22 kB)
-Downloading pyaml-25.5.0-py3-none-any.whl (26 kB)
-Downloading torch_complex-0.4.4-py3-none-any.whl (9.1 kB)
-Downloading wandb-0.20.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (23.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 23.2/23.2 MB 3.2 MB/s eta 0:00:00
-Downloading pydantic-2.11.7-py3-none-any.whl (444 kB)
-Downloading pydantic_core-2.33.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.0 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 3.2 MB/s eta 0:00:00
-Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
-Downloading GitPython-3.1.44-py3-none-any.whl (207 kB)
-Downloading gitdb-4.0.12-py3-none-any.whl (62 kB)
-Downloading smmap-5.0.2-py3-none-any.whl (24 kB)
-Downloading psutil-7.0.0-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (277 kB)
-Downloading sentry_sdk-2.32.0-py2.py3-none-any.whl (356 kB)
-Downloading typing_inspection-0.4.1-py3-none-any.whl (14 kB)
-Downloading eval_type_backport-0.2.2-py3-none-any.whl (5.8 kB)
-Downloading setproctitle-1.3.6-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (30 kB)
+Using cached portalocker-3.2.0-py3-none-any.whl (22 kB)
+Downloading pyaml-25.7.0-py3-none-any.whl (26 kB)
+Downloading wandb-0.21.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (22.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 22.2/22.2 MB 2.8 MB/s eta 0:00:00
+Using cached pydantic-2.11.7-py3-none-any.whl (444 kB)
+Using cached pydantic_core-2.33.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.0 MB)
+Using cached annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Using cached GitPython-3.1.44-py3-none-any.whl (207 kB)
+Using cached gitdb-4.0.12-py3-none-any.whl (62 kB)
+Using cached smmap-5.0.2-py3-none-any.whl (24 kB)
+Using cached sentry_sdk-2.32.0-py2.py3-none-any.whl (356 kB)
+Using cached typing_inspection-0.4.1-py3-none-any.whl (14 kB)
+Using cached eval_type_backport-0.2.2-py3-none-any.whl (5.8 kB)
 Using cached youtube_dl-2021.12.17-py2.py3-none-any.whl (1.9 MB)
-Building wheels for collected packages: pysptk, pyworld, jaconv, nnmnkwii
-  Building wheel for pysptk (pyproject.toml): started
-  Building wheel for pysptk (pyproject.toml): finished with status 'done'
-  Created wheel for pysptk: filename=pysptk-1.0.1-cp39-cp39-linux_x86_64.whl size=379289 sha256=20e2e1bb8d280b3272000faa9571ea619c73b1b17b273dff584e6a132f184d4a
-  Stored in directory: /home/uesugi/.cache/pip/wheels/99/6c/b0/535044956a66e9466c7dae7bddc9164b13070923f2199623be
-  Building wheel for pyworld (pyproject.toml): started
-  Building wheel for pyworld (pyproject.toml): finished with status 'done'
-  Created wheel for pyworld: filename=pyworld-0.3.5-cp39-cp39-linux_x86_64.whl size=200478 sha256=d68a37045f2a4ca3a7bd0debefc10d4daf84dcda3d95d8be89576ed770dedd20
-  Stored in directory: /home/uesugi/.cache/pip/wheels/23/18/c7/392d7f8cf849c09a0c2d3110b0e7ef0ec777185d34b814cda8
-  DEPRECATION: Building 'jaconv' using the legacy setup.py bdist_wheel mechanism, which will be removed in a future version. pip 25.3 will enforce this behaviour change. A possible replacement is to use the standardized build interface by setting the `--use-pep517` option, (possibly combined with `--no-build-isolation`), or adding a `pyproject.toml` file to the source tree of 'jaconv'. Discussion can be found at https://github.com/pypa/pip/issues/6334
-  Building wheel for jaconv (setup.py): started
-  Building wheel for jaconv (setup.py): finished with status 'done'
-  Created wheel for jaconv: filename=jaconv-0.4.0-py3-none-any.whl size=18314 sha256=a4eb5ca27d7ae848642798a7503efb8418d8d25a221f78b6a2cd1be6b9eab62b
-  Stored in directory: /home/uesugi/.cache/pip/wheels/c6/6b/fa/9574efaca6aced07c97ab08d7e40a5cdf8f31ecbe73d55e077
-  Building wheel for nnmnkwii (pyproject.toml): started
-  Building wheel for nnmnkwii (pyproject.toml): finished with status 'done'
-  Created wheel for nnmnkwii: filename=nnmnkwii-0.1.3-cp39-cp39-linux_x86_64.whl size=2000085 sha256=c5687c12a1a7e2faf1c9642e4daba64cf3c3684f3be6af59ca640b544934d725
-  Stored in directory: /home/uesugi/.cache/pip/wheels/ee/d7/65/9091df007cd68ac3c7a05920819adeb737a8a027a281f32dab
-Successfully built pysptk pyworld jaconv nnmnkwii
-Installing collected packages: youtube_dl, sentencepiece, pytz, morfessor, jamo, jaconv, distance, antlr4-python3-runtime, zipp, werkzeug, unidecode, tzdata, typing-extensions, threadpoolctl, tensorboard-data-server, tabulate, soupsieve, smmap, six, simplejson, setuptools, setproctitle, sentry-sdk, rpds-py, regex, pypinyin, pyparsing, pyaml, psutil, protobuf, portalocker, platformdirs, pillow, opt-einsum, omegaconf, numpy, more_itertools, lxml, kiwisolver, joblib, humanfriendly, hf-xet, grpcio, future, fonttools, eval-type-backport, einops, editdistance, decorator, Cython, cycler, configargparse, colorama, click, audioread, annotated-types, absl-py, typing-inspection, torch_complex, soundfile, scipy, sacrebleu, referencing, pyworld, python-dateutil, pydantic-core, praatio, pooch, nltk, kaldiio, importlib-resources, importlib-metadata, hydra-core, huggingface-hub, h5py, gitdb, ffmpeg-python, fastdtw, ctc-segmentation, contourpy, bottleneck, beautifulsoup4, typeguard, stempeg, scikit-learn, resampy, pystoi, pysptk, pydantic, pandas, nara_wpe, mir-eval, matplotlib, markdown, jsonschema-specifications, gitpython, gdown, fast-bss-eval, wandb, tensorboard, nnmnkwii, musdb, librosa, jsonschema, inflect, ci_sdr, asteroid_filterbanks, museval, g2p-en, espnet_tts_frontend, espnet, espnet_model_zoo
-  Attempting uninstall: typing-extensions
-    Found existing installation: typing_extensions 4.12.2
-    Uninstalling typing_extensions-4.12.2:
-      Successfully uninstalled typing_extensions-4.12.2
-  Attempting uninstall: setuptools
-    Found existing installation: setuptools 78.1.1
-    Uninstalling setuptools-78.1.1:
-      Successfully uninstalled setuptools-78.1.1
+Installing collected packages: youtube_dl, sentencepiece, morfessor, werkzeug, typing-inspection, tensorboard-data-server, tabulate, soupsieve, smmap, simplejson, sentry-sdk, rpds-py, pyparsing, pydantic-core, pyaml, praatio, portalocker, pillow, lxml, kiwisolver, importlib-resources, grpcio, future, fonttools, fastdtw, eval-type-backport, cycler, contourpy, colorama, bottleneck, annotated-types, absl-py, sacrebleu, referencing, pystoi, pysptk, pydantic, mir-eval, matplotlib, markdown, gitdb, ffmpeg-python, beautifulsoup4, tensorboard, stempeg, nnmnkwii, nara_wpe, jsonschema-specifications, gitpython, gdown, wandb, musdb, jsonschema, museval, espnet
+  Attempting uninstall: sentencepiece
+    Found existing installation: sentencepiece 0.1.97
+    Uninstalling sentencepiece-0.1.97:
+      Successfully uninstalled sentencepiece-0.1.97
   Attempting uninstall: pillow
     Found existing installation: pillow 11.1.0
     Uninstalling pillow-11.1.0:
       Successfully uninstalled pillow-11.1.0
-  Attempting uninstall: numpy
-    Found existing installation: numpy 2.0.1
-    Uninstalling numpy-2.0.1:
-      Successfully uninstalled numpy-2.0.1
+  Attempting uninstall: espnet
+    Found existing installation: espnet 202412
+    Uninstalling espnet-202412:
+      Successfully uninstalled espnet-202412
   DEPRECATION: Legacy editable install of espnet[recipe,train]==202503 from file:///home/uesugi/espnet-for-customize-jets (setup.py develop) is deprecated. pip 25.3 will enforce this behaviour change. A possible replacement is to add a pyproject.toml or enable --use-pep517, and use setuptools >= 64. If the resulting installation is not behaving as expected, try using --config-settings editable_mode=compat. Please consult the setuptools documentation for more information. Discussion can be found at https://github.com/pypa/pip/issues/11457
   Running setup.py develop for espnet
 
-Successfully installed Cython-3.1.2 absl-py-2.3.0 annotated-types-0.7.0 antlr4-python3-runtime-4.9.3 asteroid_filterbanks-0.4.0 audioread-3.0.1 beautifulsoup4-4.13.4 bottleneck-1.5.0 ci_sdr-0.0.2 click-8.1.8 colorama-0.4.6 configargparse-1.7.1 contourpy-1.3.0 ctc-segmentation-1.7.4 cycler-0.12.1 decorator-5.2.1 distance-0.1.3 editdistance-0.8.1 einops-0.8.1 espnet espnet_model_zoo-0.1.7 espnet_tts_frontend-0.0.3 eval-type-backport-0.2.2 fast-bss-eval-0.1.3 fastdtw-0.3.4 ffmpeg-python-0.2.0 fonttools-4.58.4 future-1.0.0 g2p-en-2.1.0 gdown-5.2.0 gitdb-4.0.12 gitpython-3.1.44 grpcio-1.73.1 h5py-3.14.0 hf-xet-1.1.5 huggingface-hub-0.33.1 humanfriendly-10.0 hydra-core-1.3.2 importlib-metadata-4.13.0 importlib-resources-6.5.2 inflect-7.5.0 jaconv-0.4.0 jamo-0.4.1 joblib-1.5.1 jsonschema-4.24.0 jsonschema-specifications-2025.4.1 kaldiio-2.18.1 kiwisolver-1.4.7 librosa-0.9.2 lxml-6.0.0 markdown-3.8.2 matplotlib-3.9.4 mir-eval-0.8.2 more_itertools-10.7.0 morfessor-2.0.6 musdb-0.4.3 museval-0.4.1 nara_wpe-0.0.11 nltk-3.9.1 nnmnkwii-0.1.3 numpy-1.23.5 omegaconf-2.3.0 opt-einsum-3.4.0 pandas-2.3.0 pillow-9.5.0 platformdirs-4.3.8 pooch-1.8.2 portalocker-3.2.0 praatio-6.2.0 protobuf-6.31.1 psutil-7.0.0 pyaml-25.5.0 pydantic-2.11.7 pydantic-core-2.33.2 pyparsing-3.2.3 pypinyin-0.44.0 pysptk-1.0.1 pystoi-0.4.1 python-dateutil-2.9.0.post0 pytz-2025.2 pyworld-0.3.5 referencing-0.36.2 regex-2024.11.6 resampy-0.4.3 rpds-py-0.25.1 sacrebleu-2.5.1 scikit-learn-1.6.1 scipy-1.13.1 sentencepiece-0.2.0 sentry-sdk-2.32.0 setproctitle-1.3.6 setuptools-73.0.1 simplejson-3.20.1 six-1.17.0 smmap-5.0.2 soundfile-0.13.1 soupsieve-2.7 stempeg-0.2.4 tabulate-0.9.0 tensorboard-2.19.0 tensorboard-data-server-0.7.2 threadpoolctl-3.6.0 torch_complex-0.4.4 typeguard-4.4.4 typing-extensions-4.14.0 typing-inspection-0.4.1 tzdata-2025.2 unidecode-1.4.0 wandb-0.20.1 werkzeug-3.1.3 youtube_dl-2021.12.17 zipp-3.23.0
-NUMPY_VERSION=2.0.1
+Successfully installed absl-py-2.3.1 annotated-types-0.7.0 beautifulsoup4-4.13.4 bottleneck-1.5.0 colorama-0.4.6 contourpy-1.3.0 cycler-0.12.1 espnet eval-type-backport-0.2.2 fastdtw-0.3.4 ffmpeg-python-0.2.0 fonttools-4.58.5 future-1.0.0 gdown-5.2.0 gitdb-4.0.12 gitpython-3.1.44 grpcio-1.73.1 importlib-resources-6.5.2 jsonschema-4.24.0 jsonschema-specifications-2025.4.1 kiwisolver-1.4.7 lxml-6.0.0 markdown-3.8.2 matplotlib-3.9.4 mir-eval-0.8.2 morfessor-2.0.6 musdb-0.4.3 museval-0.4.1 nara_wpe-0.0.11 nnmnkwii-0.1.3 pillow-9.5.0 portalocker-3.2.0 praatio-6.2.0 pyaml-25.7.0 pydantic-2.11.7 pydantic-core-2.33.2 pyparsing-3.2.3 pysptk-1.0.1 pystoi-0.4.1 referencing-0.36.2 rpds-py-0.26.0 sacrebleu-2.5.1 sentencepiece-0.2.0 sentry-sdk-2.32.0 simplejson-3.20.1 smmap-5.0.2 soupsieve-2.7 stempeg-0.2.4 tabulate-0.9.0 tensorboard-2.19.0 tensorboard-data-server-0.7.2 typing-inspection-0.4.1 wandb-0.21.0 werkzeug-3.1.3 youtube_dl-2021.12.17
+NUMPY_VERSION=1.23.5
 . ./activate_python.sh && python -m nltk.downloader averaged_perceptron_tagger_eng
 /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/runpy.py:127: RuntimeWarning: 'nltk.downloader' found in sys.modules after import of package 'nltk', but prior to execution of 'nltk.downloader'; this may result in unpredictable behaviour
   warn(RuntimeWarning(msg))
@@ -549,9 +476,10 @@ touch espnet.done
 . ./activate_python.sh && ./installers/install_chainer.sh "11.5"
 Obtaining file:///home/uesugi/espnet-for-customize-jets/tools/chainer
   Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): still running...
   Preparing metadata (setup.py): finished with status 'done'
 Requirement already satisfied: setuptools in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from chainer==6.0.0) (73.0.1)
-Requirement already satisfied: typing_extensions in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from chainer==6.0.0) (4.14.0)
+Requirement already satisfied: typing_extensions in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from chainer==6.0.0) (4.14.1)
 Requirement already satisfied: filelock in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from chainer==6.0.0) (3.17.0)
 Requirement already satisfied: numpy>=1.9.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from chainer==6.0.0) (1.23.5)
 Requirement already satisfied: protobuf in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from chainer==6.0.0) (6.31.1)
@@ -569,7 +497,7 @@ Collecting fairscale
 Requirement already satisfied: torch>=1.8.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from fairscale) (2.6.0+cu126)
 Requirement already satisfied: numpy>=1.22.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from fairscale) (1.23.5)
 Requirement already satisfied: filelock in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.8.0->fairscale) (3.17.0)
-Requirement already satisfied: typing-extensions>=4.10.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.8.0->fairscale) (4.14.0)
+Requirement already satisfied: typing-extensions>=4.10.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.8.0->fairscale) (4.14.1)
 Requirement already satisfied: sympy==1.13.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.8.0->fairscale) (1.13.1)
 Requirement already satisfied: networkx in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.8.0->fairscale) (3.2.1)
 Requirement already satisfied: jinja2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.8.0->fairscale) (3.1.6)
@@ -601,7 +529,7 @@ Requirement already satisfied: torch>=1.5.0 in /home/uesugi/miniconda3/envs/espn
 Collecting pytorch-ranger>=0.1.1 (from torch_optimizer)
   Using cached pytorch_ranger-0.1.1-py3-none-any.whl.metadata (509 bytes)
 Requirement already satisfied: filelock in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.5.0->torch_optimizer) (3.17.0)
-Requirement already satisfied: typing-extensions>=4.10.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.5.0->torch_optimizer) (4.14.0)
+Requirement already satisfied: typing-extensions>=4.10.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.5.0->torch_optimizer) (4.14.1)
 Requirement already satisfied: sympy==1.13.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.5.0->torch_optimizer) (1.13.1)
 Requirement already satisfied: networkx in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.5.0->torch_optimizer) (3.2.1)
 Requirement already satisfied: jinja2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch>=1.5.0->torch_optimizer) (3.1.6)
@@ -630,11 +558,46 @@ Successfully installed pytorch-ranger-0.1.1 torch_optimizer-0.3.0
 touch torch_optimizer.done
 . ./activate_python.sh && ./installers/install_flash_attn.sh
 Collecting flash-attn
-  Using cached flash_attn-2.8.0.post2-py3-none-any.whl
+  Downloading flash_attn-2.8.1.tar.gz (8.2 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.2/8.2 MB 1.4 MB/s eta 0:00:00
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): still running...
+  Preparing metadata (setup.py): finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  × python setup.py egg_info did not run successfully.
+  │ exit code: 1
+  ╰─> [11 lines of output]
+      Traceback (most recent call last):
+        File "<string>", line 2, in <module>
+        File "<pip-setuptools-caller>", line 35, in <module>
+        File "/tmp/pip-install-j61x116y/flash-attn_e82915c210aa4dbf987f561c1dac7899/setup.py", line 174, in <module>
+          raise RuntimeError(
+      RuntimeError: FlashAttention is only supported on CUDA 11.7 and above.  Note: make sure nvcc has a supported version by running nvcc -V.
+      
+      
+      torch.__version__  = 2.6.0+cu126
+      
+      
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: metadata-generation-failed
+
+× Encountered error while generating package metadata.
+╰─> See above for output.
+
+note: This is an issue with the package mentioned above, not pip.
+hint: See above for details.
+Flash Attention failed to install, trying without building CUDA
+Collecting flash-attn
+  Using cached flash_attn-2.8.1.tar.gz (8.2 MB)
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
 Requirement already satisfied: torch in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from flash-attn) (2.6.0+cu126)
 Requirement already satisfied: einops in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from flash-attn) (0.8.1)
 Requirement already satisfied: filelock in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch->flash-attn) (3.17.0)
-Requirement already satisfied: typing-extensions>=4.10.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch->flash-attn) (4.14.0)
+Requirement already satisfied: typing-extensions>=4.10.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch->flash-attn) (4.14.1)
 Requirement already satisfied: sympy==1.13.1 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch->flash-attn) (1.13.1)
 Requirement already satisfied: networkx in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch->flash-attn) (3.2.1)
 Requirement already satisfied: jinja2 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch->flash-attn) (3.1.6)
@@ -655,14 +618,20 @@ Requirement already satisfied: nvidia-nvjitlink-cu12==12.6.85 in /home/uesugi/mi
 Requirement already satisfied: triton==3.2.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from torch->flash-attn) (3.2.0)
 Requirement already satisfied: mpmath<1.4,>=1.1.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from sympy==1.13.1->torch->flash-attn) (1.3.0)
 Requirement already satisfied: MarkupSafe>=2.0 in /home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages (from jinja2->torch->flash-attn) (3.0.2)
+Building wheels for collected packages: flash-attn
+  DEPRECATION: Building 'flash-attn' using the legacy setup.py bdist_wheel mechanism, which will be removed in a future version. pip 25.3 will enforce this behaviour change. A possible replacement is to use the standardized build interface by setting the `--use-pep517` option, (possibly combined with `--no-build-isolation`), or adding a `pyproject.toml` file to the source tree of 'flash-attn'. Discussion can be found at https://github.com/pypa/pip/issues/6334
+  Building wheel for flash-attn (setup.py): started
+  Building wheel for flash-attn (setup.py): finished with status 'done'
+  Created wheel for flash-attn: filename=flash_attn-2.8.1-py3-none-any.whl size=126100431 sha256=c8eb672148666c132a61f9ba30e560e375b26f1787031fbeac5430de513f91ef
+  Stored in directory: /home/uesugi/.cache/pip/wheels/f2/2d/97/799dca00ceee03002d3342476ed5f7e2d475acc5439ac7be06
+Successfully built flash-attn
 Installing collected packages: flash-attn
-Successfully installed flash-attn-2.8.0.post2
+Successfully installed flash-attn-2.8.1
 touch flash_attn.done
 . ./activate_python.sh && { command -v ffmpeg || ./installers/install_ffmpeg.sh; }
 /home/uesugi/miniconda3/envs/espnet_custom/bin/ffmpeg
 touch ffmpeg.done
 . ./activate_python.sh; . ./extra_path.sh; python3 check_install.py
-Matplotlib is building the font cache; this may take a moment.
 [x] python=3.9.23 (main, Jun  5 2025, 13:40:20)  [GCC 11.2.0]
 
 Python modules:
@@ -743,4 +712,4 @@ Traceback (most recent call last):
   File "/home/uesugi/miniconda3/envs/espnet_custom/lib/python3.9/site-packages/torch/_library/fake_impl.py", line 31, in register
     if torch._C._dispatch_has_kernel_for_dispatch_key(self.qualname, "Meta"):
 RuntimeError: operator torchvision::nms does not exist
-make: *** [Makefile:282: check_install] Error 1
+make: *** [Makefile:282: check_install] エラー 1
