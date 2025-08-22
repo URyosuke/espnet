@@ -37,6 +37,7 @@ constraints.txt
 featbin
 ubuntu16-featbin.tar.gz
 *.wav
+*.out
 
 out/config.yaml
 hub/
