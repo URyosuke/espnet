@@ -58,6 +58,7 @@ fs=16000                   # Sampling rate.
 n_fft=1024                 # The number of fft points.
 n_shift=256                # The number of shift points.
 win_length=null            # Window length.
+delta_K=2                  # The number of delta K.
 fmin=80                    # Minimum frequency of Mel basis.
 fmax=7600                  # Maximum frequency of Mel basis.
 n_mels=80                  # The number of mel basis.
@@ -905,7 +906,7 @@ if ! "${skip_train}"; then
             _opts+="--d0_extract_conf n_fft=${n_fft} "
             _opts+="--d0_extract_conf hop_length=${n_shift} "
             _opts+="--d0_extract_conf win_length=${win_length} "
-            _opts+="--d0_extract_conf delta_order=2 "
+            _opts+="--d0_extract_conf delta_K=${delta_K} "
             # _opts+="--d0_extract_conf fmin=${fmin} "
             # _opts+="--d0_extract_conf fmax=${fmax} "
             # _opts+="--d0_extract_conf n_mels=${n_mels} "
