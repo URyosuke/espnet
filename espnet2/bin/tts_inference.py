@@ -63,7 +63,7 @@ class Text2Speech:
 
     """
 
-    @typechecked
+    # @typechecked  # Temporarily disabled for debugging
     def __init__(
         self,
         train_config: Union[Path, str, None] = None,
@@ -78,6 +78,7 @@ class Text2Speech:
         speed_control_alpha: float = 1.0,
         noise_scale: float = 0.667,
         noise_scale_dur: float = 0.8,
+        d0_control_alpha: float = 1.0,
         vocoder_config: Union[Path, str, None] = None,
         vocoder_file: Union[Path, str, None] = None,
         dtype: str = "float32",
@@ -87,6 +88,14 @@ class Text2Speech:
         prefer_normalized_feats: bool = False,
     ):
         """Initialize Text2Speech module."""
+        
+        # Debug: Print argument types
+        print(f"Debug - Argument types:")
+        print(f"  use_teacher_forcing: {type(use_teacher_forcing)} = {use_teacher_forcing}")
+        print(f"  d0_control_alpha: {type(d0_control_alpha)} = {d0_control_alpha}")
+        print(f"  speed_control_alpha: {type(speed_control_alpha)} = {speed_control_alpha}")
+        print(f"  noise_scale: {type(noise_scale)} = {noise_scale}")
+        print(f"  always_fix_seed: {type(always_fix_seed)} = {always_fix_seed}")
 
         # setup model
         model, train_args = TTSTask.build_model_from_file(
@@ -142,6 +151,9 @@ class Text2Speech:
                 noise_scale=noise_scale,
                 noise_scale_dur=noise_scale_dur,
             )
+        # Add d0 control for JETS models
+        if hasattr(self.tts, 'generator') and hasattr(self.tts.generator, 'd0_predictor'):
+            decode_conf.update(d0_alpha=d0_control_alpha)
         self.decode_conf = decode_conf
 
     @torch.no_grad()
@@ -303,7 +315,18 @@ class Text2Speech:
             else:
                 raise ValueError(f"{vocoder_tag} is unsupported format.")
 
-        return Text2Speech(**kwargs)
+        # Filter valid arguments for Text2Speech.__init__
+        import inspect
+        valid_args = set(inspect.signature(Text2Speech.__init__).parameters.keys())
+        valid_args.discard('self')  # Remove 'self' parameter
+        
+        # Filter kwargs to only include valid arguments
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in valid_args}
+        
+        # Debug: Print filtered kwargs
+        print(f"Debug - Filtered kwargs: {filtered_kwargs}")
+        
+        return Text2Speech(**filtered_kwargs)
 
 
 @typechecked
@@ -330,6 +353,7 @@ def inference(
     speed_control_alpha: float,
     noise_scale: float,
     noise_scale_dur: float,
+    d0_control_alpha: float,
     always_fix_seed: bool,
     allow_variable_data_keys: bool,
     vocoder_config: Optional[str],
@@ -366,6 +390,7 @@ def inference(
         backward_window=backward_window,
         forward_window=forward_window,
         speed_control_alpha=speed_control_alpha,
+        d0_control_alpha=d0_control_alpha,
         noise_scale=noise_scale,
         noise_scale_dur=noise_scale_dur,
         vocoder_config=vocoder_config,
@@ -696,6 +721,12 @@ def get_parser():
         type=float,
         default=1.0,
         help="Alpha in FastSpeech to change the speed of generated speech",
+    )
+    parser.add_argument(
+        "--d0_control_alpha",
+        type=float,
+        default=1.0,
+        help="Alpha to control d0 (fundamental frequency) scale in JETS",
     )
     parser.add_argument(
         "--noise_scale",

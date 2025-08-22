@@ -691,6 +691,7 @@ class JETSGenerator(torch.nn.Module):
         spembs: Optional[torch.Tensor] = None,
         lids: Optional[torch.Tensor] = None,
         use_teacher_forcing: bool = False,
+        **kwargs,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """Run inference.
 
@@ -758,6 +759,11 @@ class JETSGenerator(torch.nn.Module):
             e_outs = self.energy_predictor(hs, h_masks.unsqueeze(-1))
             d0_outs = self.d0_predictor(hs, h_masks.unsqueeze(-1))
             d_outs = self.duration_predictor.inference(hs, h_masks)
+
+        # Apply d0 control alpha if provided
+        if kwargs.get("d0_alpha") is not None:
+            d0_alpha = kwargs["d0_alpha"]
+            d0_outs = d0_outs * d0_alpha
 
         p_embs = self.pitch_embed(p_outs.transpose(1, 2)).transpose(1, 2)
         e_embs = self.energy_embed(e_outs.transpose(1, 2)).transpose(1, 2)
