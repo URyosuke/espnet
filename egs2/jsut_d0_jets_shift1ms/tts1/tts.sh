@@ -57,6 +57,7 @@ feats_normalize=global_mvn # On-the-fly feature normalizer.
 fs=16000                   # Sampling rate.
 n_fft=1024                 # The number of fft points.
 n_shift=256                # The number of shift points.
+n_shift_1ms=22            # The number of shift points.
 win_length=null            # Window length.
 fmin=80                    # Minimum frequency of Mel basis.
 fmax=7600                  # Maximum frequency of Mel basis.
@@ -903,7 +904,7 @@ if ! "${skip_train}"; then
         if [ -e "${tts_stats_dir}/train/d0_stats.npz" ]; then
             _opts+="--d0_extract_conf fs=${fs} "
             _opts+="--d0_extract_conf n_fft=${n_fft} "
-            _opts+="--d0_extract_conf hop_length=${22} "
+            _opts+="--d0_extract_conf hop_length=${n_shift_1ms} "
             _opts+="--d0_extract_conf win_length=${win_length} "
             # _opts+="--d0_extract_conf delta_order=2 "
             # _opts+="--d0_extract_conf fmin=${fmin} "
